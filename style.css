@@ -840,6 +840,7 @@ body.has-sidebar .sidebar h2 {
 /* Ordered list (keep numbering) */
 body.has-sidebar .sidebar ol {
   margin: 0;
+  font-size: 0.90rem;
   padding-left: 2rem;     /* controls number indent */
 }
 
@@ -905,6 +906,7 @@ body.has-sidebar .sidebar a[aria-current="page"] {
     justify-content: center;
 	margin: 0;
     padding: 0;
+    font-size: 0.9rem;
 
     list-style: none;                 /* removes <ol> 1,2,3... */
     display: flex;
