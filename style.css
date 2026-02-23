@@ -937,25 +937,25 @@ body.has-sidebar .sidebar a[aria-current="page"] {
 }
 
 /* Prevent global justify rules from stretching TOC text */
-.toc-trips { text-align: left; text-align-last: left; }
+.toc-dotfill { text-align: left; text-align-last: left; }
 
 /* Always black links */
-.toc-trips a,
-.toc-trips a:visited {
+.toc-dotfill a,
+.toc-dotfill a:visited {
   color: var(--body-color);
   text-decoration: none;
 }
 
 /* Remove default list markers */
-.toc-trips ol { list-style: none !important; margin: 0; padding-left: 0; }
-.toc-trips li::marker { content: "" !important; }
+.toc-dotfill ol { list-style: none !important; margin: 0; padding-left: 0; }
+.toc-dotfill li::marker { content: "" !important; }
 
 /* ----- Counters ----- */
-.toc-trips > ol { counter-reset: toc1; }
-.toc-trips > ol > li { counter-increment: toc1; counter-reset: toc2; }
+.toc-dotfill > ol { counter-reset: toc1; }
+.toc-dotfill > ol > li { counter-increment: toc1; counter-reset: toc2; }
 
 /* ----- Level 1 (leaders) as a 2-col grid: [1] [LEADER TEXT] ----- */
-.toc-trips > ol > li {
+.toc-dotfill > ol > li {
   display: grid;
   grid-template-columns: 2.25rem 1fr;
   column-gap: 0.75rem;
@@ -963,41 +963,41 @@ body.has-sidebar .sidebar a[aria-current="page"] {
   margin-top: 0.75rem;
 }
 
-.toc-trips > ol > li::before {
+.toc-dotfill > ol > li::before {
   content: counter(toc1) " "; /* NO period */
   grid-column: 1;
   justify-self: end;
   font-weight: 700;
 }
 
-.toc-trips > ol > li > .toc-leader,
-.toc-trips > ol > li > a.toc-leader {
+.toc-dotfill > ol > li > .toc-leader,
+.toc-dotfill > ol > li > a.toc-leader {
   grid-column: 2;
   font-weight: 700;          /* leaders bold */
   display: inline-block;
 }
 
 /* Indent sublist under the leader */
-.toc-trips > ol > li > ol {
+.toc-dotfill > ol > li > ol {
   grid-column: 2;
   margin-top: 0.35rem;
   padding-left: 1.5rem;      /* small indentation for subheadings */
 }
 
 /* ----- Level 2 (subitems) ----- */
-.toc-trips > ol > li > ol > li {
+.toc-dotfill > ol > li > ol > li {
   counter-increment: toc2;
   margin-top: 0.45rem;
 }
 
 /* Kill LaTeX.css injected numbering ONLY on subitems */
-.toc-trips > ol > li > ol > li::before {
+.toc-dotfill > ol > li > ol > li::before {
   content: none !important;
   display: none !important;
 }
 
 /* Subitem row layout: [1.1] [title col] [dots fill] [year] */
-.toc-trips > ol > li > ol > li > a {
+.toc-dotfill > ol > li > ol > li > a {
   display: grid;
   grid-template-columns: 0rem var(--toc-title-col) 1fr auto;
   column-gap: 0.75rem;
@@ -1008,7 +1008,7 @@ body.has-sidebar .sidebar a[aria-current="page"] {
 }
 
 /* "1.1 " numbering */
-.toc-trips > ol > li > ol > li > a::before {
+.toc-dotfill > ol > li > ol > li > a::before {
   content: counter(toc1) "." counter(toc2) " ";
   grid-column: 1;
   justify-self: end;
@@ -1016,7 +1016,7 @@ body.has-sidebar .sidebar a[aria-current="page"] {
 }
 
 /* Title shrink-wrap + mask dots under letters */
-.toc-trips > ol > li > ol .toc-title {
+.toc-dotfill > ol > li > ol .toc-title {
   grid-column: 2;
   white-space: nowrap;
 
@@ -1030,7 +1030,7 @@ body.has-sidebar .sidebar a[aria-current="page"] {
 }
 
 /* Dots fill + clip */
-.toc-trips > ol > li > ol .toc-dots {
+.toc-dotfill > ol > li > ol .toc-dots {
   grid-column: 3;
   overflow: hidden;
   white-space: nowrap;
@@ -1039,7 +1039,7 @@ body.has-sidebar .sidebar a[aria-current="page"] {
 }
 
 /* Year right */
-.toc-trips > ol > li > ol .toc-year {
+.toc-dotfill > ol > li > ol .toc-year {
   grid-column: 4;
   justify-self: end;
   white-space: nowrap;
@@ -1047,8 +1047,8 @@ body.has-sidebar .sidebar a[aria-current="page"] {
 }
 
 /* Hover underline (leaders + subitems, including dots) */
-.toc-trips a:hover,
-.toc-trips a:focus-visible {
+.toc-dotfill a:hover,
+.toc-dotfill a:focus-visible {
   text-decoration: underline;
   text-underline-offset: 2px;
 }
