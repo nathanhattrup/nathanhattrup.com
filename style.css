@@ -1078,3 +1078,47 @@ body.has-sidebar .sidebar ol > li::before {
   text-align: right;
   margin-right: 0.75rem;
 }
+
+/* ── Gantt Chart ── */
+table.gantt {
+  width: 100% !important;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  table-layout: fixed;
+  border-top: var(--border-width-thick) solid var(--table-border-color);
+  border-bottom: var(--border-width-thick) solid var(--table-border-color);
+}
+
+table.gantt th,
+table.gantt td {
+  border: var(--border-width-thin) solid var(--table-border-color);
+  padding: 0;
+  text-align: center;
+  height: 2.4rem;
+}
+
+table.gantt thead th {
+  font-weight: bold;
+  padding: 0.4rem 0;
+  border-bottom: var(--border-width-thin) solid var(--table-border-color);
+}
+
+/* Hide internal semester borders */
+table.gantt .no-right  { border-right: none; }
+table.gantt .no-left   { border-left: none; }
+
+table.gantt .gantt-label {
+  text-align: right;
+  padding-right: 0.6rem;
+  font-style: italic;
+  white-space: nowrap;
+}
+
+/* ── Bar fills ── */
+table.gantt .bar-done { background: #404040; }
+table.gantt .bar-plan { background: hsl(0, 0%, 88%); }
+
+/* ── Narrow screens ── */
+@media (max-width: 640px) {
+  table.gantt { font-size: 0.78rem; }
+}
