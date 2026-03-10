@@ -1117,6 +1117,7 @@ table.gantt .gantt-label {
 /* ── Bar fills ── */
 table.gantt .bar-done { background: #404040; }
 table.gantt .bar-plan { background: hsl(0, 0%, 88%); }
+table.gantt .bar-current { background: hsl(90, 15%, 70%);  }
 
 /* ── Narrow screens ── */
 @media (max-width: 640px) {
