@@ -1123,3 +1123,10 @@ table.gantt .bar-current { background: hsl(90, 15%, 70%);  }
 @media (max-width: 640px) {
   table.gantt { font-size: 0.78rem; }
 }
+
+/* Remove top rule from the ellipsis row so it reads as a continuation */
+.dev-log-continued td {
+  text-align: center;
+  letter-spacing: 0.25em;
+  border-top: none;
+}
