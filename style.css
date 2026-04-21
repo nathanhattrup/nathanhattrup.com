@@ -801,7 +801,7 @@ h6 {
   --paper-outer: calc(var(--paper-max) + (2 * var(--paper-pad-x)));
 
   /* Sidebar sizing */
-  --sidebar-width: 12rem;
+  --sidebar-width: 14rem;
   --sidebar-left-pad: 1.25rem; /* set to 0 for true flush-left */
 }
 
