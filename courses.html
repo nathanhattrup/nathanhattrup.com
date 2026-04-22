@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
   <link rel="stylesheet" href="prism/prism.css" />
 </head>
 
-<!-- chat added this stuff ngl -->
 <body class="text-justify has-sidebar">
+<div class="progress-bar"></div>
     <aside class="sidebar" aria-label="Site navigation">
       <nav>
         <h2>Contents</h2>
@@ -93,14 +93,14 @@
         <span class="toc-leader"><b>FULL TRANSCRIPT</b></span>
       </a>
       <ol>
-        <li>
+        <!--<li>
           <a href="#S27">
             <span class="toc-title">SPRING 2027</span>
             <span class="toc-dots"
               aria-hidden="true">.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.</span>
             <span class="toc-year"><i>PLANNED</i></span>
           </a>
-        </li>        
+        </li> -->       
         <li>
           <a href="#F26">
             <span class="toc-title">FALL 2026</span>
@@ -319,6 +319,7 @@
         </tr>
       </thead>
       <tbody>
+        <tr><td>ECE 548</td><td>Python in Electrical & Computer Engineering</td></tr>
         <tr><td>ECE 584</td><td>Electric Power Engineering Practicum II</td></tr>
       </tbody>
     </table>
@@ -449,6 +450,94 @@
 </article>
 </main>
 
+</div>
+
+<a href="#" class="back-to-top" aria-label="Back to top">&uarr;</a>
+
+<div class="lightbox-overlay" onclick="closeLightbox()">
+  <button class="lightbox-close" aria-label="Close">&times;</button>
+  <button class="lightbox-prev" aria-label="Previous" onclick="event.stopPropagation();lightboxNav(-1)">&lsaquo;</button>
+  <img src="" alt="" onclick="event.stopPropagation()">
+  <button class="lightbox-next" aria-label="Next" onclick="event.stopPropagation();lightboxNav(1)">&rsaquo;</button>
+</div>
+
+<script>
+(function() {
+  var btn = document.querySelector('.back-to-top');
+  var bar = document.querySelector('.progress-bar');
+  window.addEventListener('scroll', function() {
+    btn.classList.toggle('visible', window.scrollY > 400);
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = h > 0 ? (window.scrollY / h * 100) + '%' : '0%';
+  });
+})();
+var lbImages = [];
+var lbIndex = 0;
+var lbOverlay = document.querySelector('.lightbox-overlay');
+var lbImg = lbOverlay.querySelector('img');
+var lbPrev = lbOverlay.querySelector('.lightbox-prev');
+var lbNext = lbOverlay.querySelector('.lightbox-next');
+function showLbImage() {
+  var item = lbImages[lbIndex];
+  lbImg.src = item.src;
+  lbImg.alt = item.alt;
+  lbPrev.classList.toggle('hidden', lbIndex === 0);
+  lbNext.classList.toggle('hidden', lbIndex === lbImages.length - 1);
+}
+function openLightbox(img) {
+  var gallery = img.closest('.gallery');
+  if (gallery) {
+    var imgs = gallery.querySelectorAll('img');
+    lbImages = [];
+    imgs.forEach(function(i) {
+      var fig = i.closest('figure');
+      var capEl = fig ? fig.querySelector('figcaption') : null;
+      lbImages.push({ src: i.src, alt: i.alt });
+    });
+    lbIndex = Array.from(imgs).indexOf(img);
+  } else {
+    var fig = img.closest('figure');
+    var capEl = fig ? fig.querySelector('figcaption') : null;
+    lbImages = [{ src: img.src, alt: img.alt }];
+    lbIndex = 0;
+  }
+  showLbImage();
+  lbOverlay.classList.add('active');
+}
+function closeLightbox() {
+  lbOverlay.classList.remove('active');
+  lbImages = [];
+}
+function lightboxNav(dir) {
+  var next = lbIndex + dir;
+  if (next >= 0 && next < lbImages.length) {
+    lbIndex = next;
+    showLbImage();
+  }
+}
+document.addEventListener('keydown', function(e) {
+  if (!lbOverlay.classList.contains('active')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') lightboxNav(-1);
+  if (e.key === 'ArrowRight') lightboxNav(1);
+});
+document.querySelectorAll('.gallery img, article > figure img').forEach(function(img) {
+  img.style.cursor = 'pointer';
+  img.addEventListener('click', function(e) {
+    e.stopPropagation();
+    openLightbox(this);
+  });
+});
+document.querySelectorAll('article table:not(.gantt)').forEach(function(t) {
+  if (!t.parentElement.classList.contains('table-scroll-wrap') &&
+      !t.parentElement.classList.contains('scroll-wrapper')) {
+    var wrap = document.createElement('div');
+    wrap.className = 'table-scroll-wrap';
+    t.parentNode.insertBefore(wrap, t);
+    wrap.appendChild(t);
+  }
+});
+</script>
 
 </body>
 </html>

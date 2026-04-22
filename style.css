@@ -1130,3 +1130,342 @@ table.gantt .bar-current { background: hsl(90, 15%, 70%);  }
   letter-spacing: 0.25em;
   border-top: none;
 }
+
+
+/* =========================
+   Back-to-top button
+   ========================= */
+.back-to-top {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1rem;
+  z-index: 100;
+
+  background: var(--body-bg-color);
+  color: var(--body-color);
+  border: var(--border-width-thin) solid var(--table-border-color);
+  border-radius: 2px;
+
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0.4rem 0.6rem;
+  cursor: pointer;
+  text-decoration: none;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+}
+.back-to-top.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.back-to-top:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.back-to-top,
+.back-to-top:visited {
+  color: var(--body-color);
+}
+
+/* =========================
+   Photo gallery grid
+   ========================= */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+.gallery figure {
+  margin: 0;
+}
+.gallery figure img {
+  width: 100%;
+  height: auto;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.gallery figure img:hover {
+  transform: scale(1.03);
+}
+.gallery figure {
+  overflow: hidden;
+}
+.gallery figure {
+  counter-increment: none;
+}
+.gallery figcaption::before {
+  content: none;
+}
+@media (max-width: 640px) {
+  .gallery {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================
+   Image lightbox
+   ========================= */
+.lightbox-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.85);
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.lightbox-overlay.active {
+  display: flex;
+}
+.lightbox-overlay img {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  cursor: default;
+  border-radius: 2px;
+}
+.lightbox-close {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 201;
+  color: #fff;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  font-family: inherit;
+  line-height: 1;
+}
+.lightbox-prev,
+.lightbox-next {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 201;
+  color: #fff;
+  background: none;
+  border: none;
+  font-size: 2.5rem;
+  cursor: pointer;
+  font-family: inherit;
+  line-height: 1;
+  padding: 0.5rem;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+  user-select: none;
+}
+.lightbox-prev:hover,
+.lightbox-next:hover {
+  opacity: 1;
+}
+.lightbox-prev { left: 1rem; }
+.lightbox-next { right: 1rem; }
+.lightbox-prev.hidden,
+.lightbox-next.hidden {
+  display: none;
+}
+
+
+/* =========================
+   Responsive video embeds
+   ========================= */
+.video-wrap {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 */
+  height: 0;
+  overflow: hidden;
+  margin-top: 1rem;
+}
+.video-wrap iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* =========================
+   Reading progress bar
+   ========================= */
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: var(--body-color);
+  width: 0%;
+  z-index: 150;
+  transition: width 0.1s linear;
+}
+
+
+/* =========================
+   Mobile-first responsive fixes
+   ========================= */
+
+/* Base: ensure body doesn't overflow on small screens */
+body {
+  overflow-x: hidden;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Tables: wrap all in scroll container via JS on mobile */
+article table {
+  width: 100%;
+}
+.table-scroll-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 1em 0;
+}
+
+/* Small screens */
+@media (max-width: 640px) {
+  body {
+    padding: 1rem 0.75rem;
+    font-size: 0.95rem;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    line-height: 2.2rem;
+    margin-bottom: 1rem;
+  }
+  h2 {
+    font-size: 1.35rem;
+    line-height: 1.7rem;
+    margin-top: 2rem;
+  }
+  h3 {
+    font-size: 1.15rem;
+    margin-top: 1.5rem;
+  }
+
+  .abstract {
+    margin: 1.25rem 0;
+  }
+
+  /* Content max-width */
+  .content {
+    max-width: 100%;
+  }
+
+  /* TOC: tighter on mobile */
+  .toc-dotfill > ol > li > ol > li > a {
+    grid-template-columns: 0rem auto 1fr auto;
+    column-gap: 0.4rem;
+    font-size: 0.85rem;
+  }
+  .toc-dotfill > ol > li {
+    grid-template-columns: 1.5rem 1fr;
+    column-gap: 0.4rem;
+  }
+
+  /* Gantt chart: smaller on mobile */
+  table.gantt {
+    font-size: 0.7rem;
+  }
+  table.gantt th,
+  table.gantt td {
+    height: 1.8rem;
+  }
+  table.gantt .gantt-label {
+    padding-right: 0.3rem;
+  }
+
+  /* Figures: less margin */
+  figure {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  /* Lightbox: more room on mobile */
+  .lightbox-overlay img {
+    max-width: 95vw;
+    max-height: 85vh;
+  }
+
+  /* Back to top: smaller */
+  .back-to-top {
+    bottom: 1rem;
+    right: 0.5rem;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  /* Footnotes tighter */
+  .footnotes p {
+    font-size: 80%;
+  }
+
+  /* Video embeds */
+  .video-wrap {
+    margin-left: -0.75rem;
+    margin-right: -0.75rem;
+    width: calc(100% + 1.5rem);
+  }
+
+}
+
+/* Medium screens — tablet-ish tweaks */
+@media (max-width: 1025px) and (min-width: 641px) {
+  h1 {
+    font-size: 2.1rem;
+  }
+  h2 {
+    font-size: 1.5rem;
+  }
+}
+
+/* =========================
+   Print stylesheet
+   ========================= */
+@media print {
+  .sidebar,
+  .back-to-top,
+  .lightbox-overlay,
+  .progress-bar {
+    display: none !important;
+  }
+
+  body.has-sidebar {
+    max-width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+
+  :root {
+    --body-color: #000;
+    --body-bg-color: #fff;
+    --table-border-color: #000;
+  }
+
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    font-weight: normal;
+  }
+  /* Don't show URLs for internal/anchor links */
+  a[href^="#"]::after,
+  a[href^="javascript"]::after,
+  .toc-dotfill a::after,
+  .sidebar a::after {
+    content: none;
+  }
+
+  figure, table {
+    break-inside: avoid;
+  }
+  h2, h3 {
+    break-after: avoid;
+  }
+}

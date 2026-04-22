@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,17 +8,17 @@
   <link rel="stylesheet" href="prism/prism.css" />
 </head>
 
-<!-- chat added this stuff ngl -->
 <body class="text-justify has-sidebar">
+<div class="progress-bar"></div>
     <aside class="sidebar" aria-label="Site navigation">
       <nav>
         <h2>Contents</h2>
         <ol>
           <li><a href="index.html" aria-current="page">HOME</a></li>
-          <!-- <li><a href="courses.html">COURSES</a></li>
-          <li><a href="projects.html">PROJECTS</a></li>          
-		  <li><a href="experience.html">EXPERIENCE</a></li> -->
-		  <li><a href="trips.html">TRIPS</a></li>
+          <li><a href="courses.html">COURSES</a></li>
+          <li><a href="projects.html">PROJECTS</a></li>
+          <li><a href="experience.html">EXPERIENCE</a></li>
+          <li><a href="trips.html">TRIPS</a></li>
         </ol>
       </nav>
     </aside>
@@ -46,8 +46,7 @@
 <article>
 
 <figure>
-	<img src="images/me_and_blair.JPEG" 
-	loading = "lazy" alt="Blair and I"/>
+	<img src="images/me_and_blair.JPEG" loading="lazy" alt="Blair and I"/>
 	<figcaption>
 	My girlfriend Blair and I.
 	</figcaption>
@@ -81,23 +80,23 @@ I also attempted to format everything in the style of <span class="latex">L<span
   </thead>
   <tbody>
     <tr>
-      <th>Home</td>
+      <th>Home</th>
       <td>Bio and overview</td>
     </tr>
     <tr>
-      <th>Courses</td>
+      <th>Courses</th>
       <td>Favorite classes, degree timeline, and transcript</td>
     </tr>
     <tr>
-      <th>Projects</td>
+      <th>Projects</th>
       <td>School and personal projects</td>
     </tr>
     <tr>
-      <th>Experience</td>
+      <th>Experience</th>
       <td>Internship summaries</td>
     </tr>
     <tr>
-      <th>Trips</td>
+      <th>Trips</th>
       <td>School and backpacking trips</td>
     </tr>
   </tbody>
@@ -215,5 +214,97 @@ OpenPowerlifting</a> page.</p>
 </main>
 
 </div>
+
+<a href="#" class="back-to-top" aria-label="Back to top">&uarr;</a>
+
+<div class="lightbox-overlay" onclick="closeLightbox()">
+  <button class="lightbox-close" aria-label="Close">&times;</button>
+  <button class="lightbox-prev" aria-label="Previous" onclick="event.stopPropagation();lightboxNav(-1)">&lsaquo;</button>
+  <img src="" alt="" onclick="event.stopPropagation()">
+  <button class="lightbox-next" aria-label="Next" onclick="event.stopPropagation();lightboxNav(1)">&rsaquo;</button>
+</div>
+
+<script>
+// Back to top + progress bar
+(function() {
+  var btn = document.querySelector('.back-to-top');
+  var bar = document.querySelector('.progress-bar');
+  window.addEventListener('scroll', function() {
+    btn.classList.toggle('visible', window.scrollY > 400);
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = h > 0 ? (window.scrollY / h * 100) + '%' : '0%';
+  });
+})();
+
+// Lightbox with per-gallery navigation
+var lbImages = [];
+var lbIndex = 0;
+var lbOverlay = document.querySelector('.lightbox-overlay');
+var lbImg = lbOverlay.querySelector('img');
+var lbPrev = lbOverlay.querySelector('.lightbox-prev');
+var lbNext = lbOverlay.querySelector('.lightbox-next');
+function showLbImage() {
+  var item = lbImages[lbIndex];
+  lbImg.src = item.src;
+  lbImg.alt = item.alt;
+  lbPrev.classList.toggle('hidden', lbIndex === 0);
+  lbNext.classList.toggle('hidden', lbIndex === lbImages.length - 1);
+}
+function openLightbox(img) {
+  var gallery = img.closest('.gallery');
+  if (gallery) {
+    var imgs = gallery.querySelectorAll('img');
+    lbImages = [];
+    imgs.forEach(function(i) {
+      var fig = i.closest('figure');
+      var capEl = fig ? fig.querySelector('figcaption') : null;
+      lbImages.push({ src: i.src, alt: i.alt });
+    });
+    lbIndex = Array.from(imgs).indexOf(img);
+  } else {
+    var fig = img.closest('figure');
+    var capEl = fig ? fig.querySelector('figcaption') : null;
+    lbImages = [{ src: img.src, alt: img.alt }];
+    lbIndex = 0;
+  }
+  showLbImage();
+  lbOverlay.classList.add('active');
+}
+function closeLightbox() {
+  lbOverlay.classList.remove('active');
+  lbImages = [];
+}
+function lightboxNav(dir) {
+  var next = lbIndex + dir;
+  if (next >= 0 && next < lbImages.length) {
+    lbIndex = next;
+    showLbImage();
+  }
+}
+document.addEventListener('keydown', function(e) {
+  if (!lbOverlay.classList.contains('active')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') lightboxNav(-1);
+  if (e.key === 'ArrowRight') lightboxNav(1);
+});
+document.querySelectorAll('.gallery img, article > figure img').forEach(function(img) {
+  img.style.cursor = 'pointer';
+  img.addEventListener('click', function(e) {
+    e.stopPropagation();
+    openLightbox(this);
+  });
+});
+// Wrap tables in scroll container for mobile
+document.querySelectorAll('article table:not(.gantt)').forEach(function(t) {
+  if (!t.parentElement.classList.contains('table-scroll-wrap') &&
+      !t.parentElement.classList.contains('scroll-wrapper')) {
+    var wrap = document.createElement('div');
+    wrap.className = 'table-scroll-wrap';
+    t.parentNode.insertBefore(wrap, t);
+    wrap.appendChild(t);
+  }
+});
+</script>
+
 </body>
 </html>
