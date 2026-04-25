@@ -1188,13 +1188,13 @@ table.gantt .bar-current { background: hsl(90, 15%, 70%);  }
   cursor: pointer;
   transition: transform 0.2s ease;
 } 
-.gallery figure img:hover {
+/*.gallery figure img:hover {
   transform: scale(1.03);
 }
 .gallery figure {
   overflow: hidden;
 }
-/*.gallery figure {
+.gallery figure {
   counter-increment: none;
 }
 .gallery figcaption::before {
