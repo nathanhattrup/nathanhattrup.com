@@ -5,6 +5,17 @@
  * Licensed under MIT (https://github.com/vincentdoerig/latex-css/blob/master/LICENSE)
 */
 
+/* ============================================================
+   FONT FACES
+   Load the Latin Modern + Libertinus font families that give
+   the site its LaTeX-document look. Each block tells the
+   browser where to find one weight/style combination, with
+   woff2 (smallest) preferred and woff/ttf as fallbacks.
+   `font-display: swap` shows a fallback font immediately and
+   swaps in the real one once it loads (avoids invisible text).
+   ============================================================ */
+
+/* Latin Modern — regular (the default body font) */
 @font-face {
   font-family: 'Latin Modern';
   font-style: normal;
@@ -15,6 +26,7 @@
     url('./fonts/LM-regular.ttf') format('truetype');
 }
 
+/* Latin Modern — italic */
 @font-face {
   font-family: 'Latin Modern';
   font-style: italic;
@@ -25,6 +37,7 @@
     url('./fonts/LM-italic.ttf') format('truetype');
 }
 
+/* Latin Modern — bold */
 @font-face {
   font-family: 'Latin Modern';
   font-style: normal;
@@ -35,6 +48,7 @@
     url('./fonts/LM-bold.ttf') format('truetype');
 }
 
+/* Latin Modern — bold italic */
 @font-face {
   font-family: 'Latin Modern';
   font-style: italic;
@@ -45,6 +59,7 @@
     url('./fonts/LM-bold-italic.ttf') format('truetype');
 }
 
+/* Libertinus — alternate serif family (used when body has class "libertinus") */
 @font-face {
   font-family: 'Libertinus';
   font-style: normal;
@@ -77,6 +92,7 @@
   src: url('./fonts/Libertinus-bold-italic.woff2') format('woff2');
 }
 
+/* Libertinus semibold (weight 600) — used for in-between bolding */
 @font-face {
   font-family: 'Libertinus';
   font-style: normal;
@@ -93,33 +109,45 @@
   src: url('./fonts/Libertinus-semibold-italic.woff2') format('woff2');
 }
 
-/* Box sizing rules */
+/* ============================================================
+   GLOBAL RESETS
+   ============================================================ */
+
+/* Use border-box sizing on every element so width/height include
+   padding+border. Stops "I added padding and now my layout broke". */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
+/* ============================================================
+   CSS CUSTOM PROPERTIES (theme variables)
+   These are the colors and sizes used everywhere else. Change a
+   value here and it propagates across the whole stylesheet.
+   ============================================================ */
 :root {
-  --body-color: hsl(0, 5%, 10%);
-  --body-bg-color: hsl(210, 20%, 98%);
-  --link-visited: hsl(0, 100%, 33%);
-  --link-focus-outline: hsl(220, 90%, 52%);
-  --pre-bg-color: hsl(210, 28%, 93%);
-  --kbd-bg-color: hsl(210, 5%, 100%);
-  --kbd-border-color: hsl(210, 5%, 70%);
-  --table-border-color: black;
-  --border-width-thin: 1.36px;
-  --border-width-thick: 2.27px;
-  --sidenote-target-border-color: hsl(55, 55%, 70%);
-  --footnotes-border-color: hsl(0, 0%, 39%);
-  --text-indent-size: 1.463rem; /* In 12pt [Latin Modern font] LaTeX article
+  --body-color: hsl(0, 5%, 10%);             /* main text color (near-black) */
+  --body-bg-color: hsl(210, 20%, 98%);       /* page background (off-white) */
+  --link-visited: hsl(0, 100%, 33%);         /* link/visited link color (dark red) */
+  --link-focus-outline: hsl(220, 90%, 52%);  /* keyboard-focus outline color */
+  --pre-bg-color: hsl(210, 28%, 93%);        /* code-block background */
+  --kbd-bg-color: hsl(210, 5%, 100%);        /* <kbd> key-cap background */
+  --kbd-border-color: hsl(210, 5%, 70%);     /* <kbd> key-cap border */
+  --table-border-color: black;               /* table rules */
+  --border-width-thin: 1.36px;               /* booktabs midrule width */
+  --border-width-thick: 2.27px;              /* booktabs toprule/bottomrule width */
+  --sidenote-target-border-color: hsl(55, 55%, 70%);  /* highlight when sidenote is linked-to */
+  --footnotes-border-color: hsl(0, 0%, 39%); /* divider above footnotes */
+  --text-indent-size: 1.463rem;              /* paragraph indent matching LaTeX article */
+  /* In 12pt [Latin Modern font] LaTeX article
   \parindent =~ 17.625pt; taking also into account the ratio
   1pt[LaTeX] = (72 / 72.27) * 1pt[HTML], with default 12pt/1rem LaTeX.css font
   size, the identation value in rem CSS units is:
   \parindent =~ 17.625 * (72 / 72.27) / 12 = 1.463rem. */
 }
 
+/* Manual dark-mode override: add class="latex-dark" to <body> */
 .latex-dark {
   --body-color: hsl(0, 0%, 86%);
   --body-bg-color: hsl(0, 0%, 16%);
@@ -131,9 +159,10 @@
   --table-border-color: white;
   --sidenote-target-border-color: hsl(0, 0%, 59%);
   --footnotes-border-color: hsl(0, 0%, 59%);
-  --proof-symbol-filter: invert(80%);
+  --proof-symbol-filter: invert(80%); /* invert the proof end-of-proof glyph for dark bg */
 }
 
+/* Auto dark-mode: triggers when OS prefers dark AND class="latex-dark-auto" is set */
 @media (prefers-color-scheme: dark) {
    .latex-dark-auto {
     --body-color: hsl(0, 0%, 86%);
@@ -150,7 +179,8 @@
   }
 }
 
-/* Remove default margin */
+/* Wipe browser default margins on common block elements so spacing
+   is fully controlled by this stylesheet. */
 body,
 h1,
 h2,
@@ -167,7 +197,8 @@ dd {
   margin: 0;
 }
 
-/* Make default font-size 1rem and add smooth scrolling to anchors */
+/* Set root font size + smooth in-page anchor scrolling
+   (skipped if user has reduced-motion preference). */
 html {
   font-size: 1rem;
 }
@@ -177,30 +208,39 @@ html {
   }
 }
 
+/* Opt-in font swap: <body class="libertinus"> uses Libertinus instead of Latin Modern. */
 body.libertinus {
   font-family: 'Libertinus', Georgia, Cambria, 'Times New Roman', Times, serif;
 }
 
+/* Opt-in justified text: <body class="text-justify"> turns on full-width justification. */
 .text-justify {
   text-align: justify;
 }
 
+/* ============================================================
+   BODY — the centered "paper" element
+   ============================================================ */
 body {
   font-family: 'Latin Modern', Georgia, Cambria, 'Times New Roman', Times, serif;
   line-height: 1.8;
 
-  max-width: 80ch;
+  max-width: 80ch;             /* page width capped at ~80 characters */
   min-height: 100vh;
-  overflow-x: hidden;
-  margin: 0 auto;
+  overflow-x: hidden;          /* hide accidental horizontal scrollbars */
+  margin: 0 auto;              /* horizontally center the "paper" */
   padding: 2rem 1.25rem;
 
-  counter-reset: theorem definition sidenote-counter;
+  /* Initialize CSS counters used by theorems, definitions, sidenotes, and figures.
+     Adding `figcaption` here keeps the figure number page-wide even when
+     figures sit inside .gallery wrapper divs (which otherwise create a new
+     counter scope in Chromium and reset numbering each gallery). */
+  counter-reset: theorem definition sidenote-counter figcaption;
 
   color: var(--body-color);
   background-color: var(--body-bg-color);
 
-  text-rendering: optimizeLegibility;
+  text-rendering: optimizeLegibility;  /* nicer kerning/ligatures */
 
   /* Allow automatic hyphenation for all text in the document */
   hyphens: auto;
@@ -208,64 +248,69 @@ body {
   -moz-hyphens: auto;
 }
 
+/* Default top margin between paragraphs */
 p {
   margin-top: 1rem;
 }
 
-/* Indents paragraphs like in LaTeX documents*/
+/* Optional LaTeX-style first-line indent: <article class="indent-pars"> */
 .indent-pars p {
   text-indent: var(--text-indent-size);
 }
 
+/* Escape hatch: turn off indent on a single paragraph with class="no-indent" */
 .indent-pars p.no-indent,
 p.no-indent {
   text-indent: 0;
 }
 
+/* Don't indent paragraphs nested inside list items (LaTeX doesn't either) */
 .indent-pars ol p,
 .indent-pars ul p {
   text-indent: 0;
 }
 
+/* Don't indent the first paragraph after a heading */
 .indent-pars h2 + p,
 .indent-pars h3 + p,
 .indent-pars h4 + p {
   text-indent: 0;
 }
 
-/* A elements that don't have a class get default styles */
+/* Improve underline rendering for plain links (skips ink under descenders) */
 a:not([class]) {
   text-decoration-skip-ink: auto;
 }
 
-/* Make links red */
+/* Default link color (red, matches LaTeX hyperref look) */
 a,
 a:visited {
   color: var(--link-visited);
 }
 
+/* Visible focus ring for keyboard users */
 a:focus {
   outline-offset: 2px;
   outline: 2px solid var(--link-focus-outline);
 }
 
-/* Allow line breaks between any two characters */
+/* Helper: `class="break-all"` lets long strings (URLs, IDs) break anywhere */
 .break-all {
   /*
-    NOTE: Whith `break-all` value no hyphens are shown, even if the word breaks
+    NOTE: With `break-all` value no hyphens are shown, even if the word breaks
     at a hyphenation point
   */
   word-break: break-all;
 }
 
-/* Make images easier to work with */
+/* Make all images responsive by default */
 img {
   max-width: 100%;
   height: auto;
   display: block;
 }
 
-/* Inherit fonts for inputs and buttons */
+/* Form controls inherit the document font instead of a system default */
 input,
 button,
 textarea,
@@ -273,29 +318,32 @@ select {
   font: inherit;
 }
 
-/* Prevent textarea from overflowing */
+/* Stop textareas from blowing past the column */
 textarea {
   width: 100%;
 }
 
-/* Natural flow and rhythm in articles by default */
+/* Vertical rhythm inside <article>: every block-level child after the first
+   gets 1em of top margin. The "lobotomized owl" trick. */
 article > * + * {
   margin-top: 1em;
 }
 
-/* Styles for inline code or code snippets */
+/* ============================================================
+   CODE / PRE / KBD
+   ============================================================ */
 code,
 pre,
 kbd {
   font-family: Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
     monospace;
-  font-size: 85%;
-  hyphens: none;
+  font-size: 85%;        /* smaller than body so monospace doesn't dominate */
+  hyphens: none;         /* never hyphenate code */
 }
 pre {
   padding: 1rem 1.4rem;
   max-width: 100%;
-  overflow: auto;
+  overflow: auto;        /* scroll horizontally if a code line is too long */
   border-radius: 4px;
   background: var(--pre-bg-color);
 }
@@ -303,6 +351,7 @@ pre code {
   font-size: 95%;
   position: relative;
 }
+/* <kbd> renders as a small key-cap (e.g. ⌘K) */
 kbd {
   background: var(--kbd-bg-color);
   border: 1px solid var(--kbd-border-color);
@@ -311,43 +360,54 @@ kbd {
   font-size: 75%;
 }
 
-/* Better tables */
+/* ============================================================
+   TABLES — booktabs (LaTeX) style by default
+   The "not(.borders-custom)" guard means: only style tables that
+   DON'T have class="borders-custom" (those opt out and use the
+   per-side border classes further down).
+   ============================================================ */
 table:not(.borders-custom) {
   border-collapse: collapse;
   border-spacing: 0;
   width: auto;
   max-width: 100%;
-  border-top: var(--border-width-thick) solid var(--table-border-color);
-  border-bottom: var(--border-width-thick) solid var(--table-border-color);
+  border-top: var(--border-width-thick) solid var(--table-border-color);     /* toprule */
+  border-bottom: var(--border-width-thick) solid var(--table-border-color);  /* bottomrule */
   /* display: block; */
   overflow-x: auto; /* does not work because element is not block */
   /* white-space: nowrap; */
-  counter-increment: caption;
+  counter-increment: caption;  /* every table bumps the "Table N" counter */
 }
-/* add bottom border on column table headings  */
+/* Midrule under column headers in <thead> */
 table:not(.borders-custom) tr > th[scope='col'] {
   border-bottom: var(--border-width-thin) solid var(--table-border-color);
 }
-/* add right border on row table headings  */
+/* Vertical rule to the right of row headers */
 table:not(.borders-custom) tr > th[scope='row'] {
   border-right: var(--border-width-thin) solid var(--table-border-color);
 }
+/* Thin rule between <thead> and the first <tbody> row */
 table:not(.borders-custom) > tbody > tr:first-child > td,
 table:not(.borders-custom) > tbody > tr:first-child > th {
   border-top: var(--border-width-thin) solid var(--table-border-color);
 }
+/* Thin rule above the bottom rule on the last row */
 table:not(.borders-custom) > tbody > tr:last-child > td,
 table:not(.borders-custom) > tbody > tr:last-child > th {
   border-bottom: var(--border-width-thin) solid var(--table-border-color);
 }
 
+/* Generic cell styling */
 th,
 td {
   text-align: left;
   padding: 0.5rem;
   line-height: 1.1;
 }
-/* Table caption */
+
+/* ============================================================
+   TABLE CAPTIONS
+   ============================================================ */
 caption {
   text-align: left;
   font-size: 0.923em;
@@ -357,23 +417,28 @@ caption {
   margin-left: 0;
 }
 
+/* Auto-prefix captions with "Table 1.", "Table 2.", ... */
 caption::before {
   content: 'Table ' counter(caption) '. ';
   font-weight: bold;
 }
 
-/* allow scroll on the x-axis */
+/* Wrapper that lets a wide table scroll horizontally without breaking layout */
 .scroll-wrapper {
   overflow-x: auto;
 }
 
-/* if a table is wrapped in a scroll wrapper,
-  the table cells shouldn't wrap */
+/* Inside a scroll wrapper, prevent cell text from wrapping */
 .scroll-wrapper > table td {
   white-space: nowrap;
 }
 
-/* Table custom borders */
+/* ============================================================
+   CUSTOM-BORDER TABLES
+   Tables marked class="borders-custom" turn off all the booktabs
+   defaults and let you compose borders by adding the helper
+   classes below to specific rows/cells.
+   ============================================================ */
 table.borders-custom {
   border-collapse: collapse;
   border-spacing: 0;
@@ -383,33 +448,22 @@ table.borders-custom {
   counter-increment: caption;
 }
 
-.border-top-thick {
-  border-top: var(--border-width-thick) solid var(--table-border-color);
-}
-.border-right-thick {
-  border-right: var(--border-width-thick) solid var(--table-border-color);
-}
-.border-bottom-thick {
-  border-bottom: var(--border-width-thick) solid var(--table-border-color);
-}
-.border-left-thick {
-  border-left: var(--border-width-thick) solid var(--table-border-color);
-}
+/* Helper border classes — apply to any cell or row */
+.border-top-thick    { border-top:    var(--border-width-thick) solid var(--table-border-color); }
+.border-right-thick  { border-right:  var(--border-width-thick) solid var(--table-border-color); }
+.border-bottom-thick { border-bottom: var(--border-width-thick) solid var(--table-border-color); }
+.border-left-thick   { border-left:   var(--border-width-thick) solid var(--table-border-color); }
 
-.border-top-thin {
-  border-top: var(--border-width-thin) solid var(--table-border-color);
-}
-.border-right-thin {
-  border-right: var(--border-width-thin) solid var(--table-border-color);
-}
-.border-bottom-thin {
-  border-bottom: var(--border-width-thin) solid var(--table-border-color);
-}
-.border-left-thin {
-  border-left: var(--border-width-thin) solid var(--table-border-color);
-}
+.border-top-thin     { border-top:    var(--border-width-thin)  solid var(--table-border-color); }
+.border-right-thin   { border-right:  var(--border-width-thin)  solid var(--table-border-color); }
+.border-bottom-thin  { border-bottom: var(--border-width-thin)  solid var(--table-border-color); }
+.border-left-thin    { border-left:   var(--border-width-thin)  solid var(--table-border-color); }
 
-/* Table column alignment */
+/* ============================================================
+   PER-COLUMN ALIGNMENT
+   Add class="col-3-c" on a table to center column 3, etc.
+   l = left, c = center, r = right.
+   ============================================================ */
 .col-1-l tr > :nth-child(1),
 .col-2-l tr > :nth-child(2),
 .col-3-l tr > :nth-child(3),
@@ -453,7 +507,11 @@ table.borders-custom {
   text-align: right;
 }
 
-/* Format figure captions (based on table captions) */
+/* ============================================================
+   FIGURE CAPTIONS — auto-numbered "Figure 1.", "Figure 2.", ...
+   Counter is initialized on <body> (see counter-reset above)
+   so numbers run page-wide, not per-section.
+   ============================================================ */
 figure {
   counter-increment: figcaption;
 }
@@ -469,36 +527,48 @@ figcaption {
   width: 100%;
   margin-left: 0;
 }
+/* Auto-prefix every figcaption with "Figure N. " */
 figcaption::before {
   content: 'Figure ' counter(figcaption) '. ';
   font-weight: bold;
 }
 
-/* Center align the title */
+/* ============================================================
+   HEADINGS
+   ============================================================ */
+
+/* Center the document title (first h1 only) */
 h1:first-child {
   text-align: center;
 }
 
-/* Nested ordered list for ToC */
+/* ============================================================
+   TOC NUMBERING (default <nav> ordered lists)
+   Numbers nest like LaTeX: 1, 1.1, 1.1.1, ...
+   ============================================================ */
 nav ol {
   counter-reset: item;
   padding-left: 2rem;
 }
 nav ol > li {
-  display: block;
+  display: block;            /* hide the native marker */
 }
 nav ol > li::before {
-  content: counters(item, '.') ' ';
+  content: counters(item, '.') ' ';   /* "counters" walks up nesting → 1.2.3 */
   counter-increment: item;
   padding-right: 0.85rem;
 }
 
-/* Center definitions (most useful for display equations) */
+/* Definition lists — center <dd> (best for display equations) */
 dl dd {
   text-align: center;
 }
 
-/* Theorem */
+/* ============================================================
+   THEOREM / LEMMA / PROOF / DEFINITION ENVIRONMENTS
+   Mimic LaTeX amsthm. Add class="theorem" on a <div>/<p> and it
+   gets auto-numbered with a bold "Theorem N." prefix.
+   ============================================================ */
 .theorem {
   counter-increment: theorem;
   display: block;
@@ -511,7 +581,7 @@ dl dd {
   font-style: normal;
 }
 
-/* Lemma */
+/* Lemma shares the theorem counter (so they're numbered consecutively) */
 .lemma {
   counter-increment: theorem;
   display: block;
@@ -524,7 +594,7 @@ dl dd {
   font-style: normal;
 }
 
-/* Proof */
+/* Proof block: starts with "Proof." and ends with a tombstone ◾ */
 .proof {
   display: block;
   margin: 12px 0;
@@ -532,7 +602,7 @@ dl dd {
   position: relative;
 }
 .proof::before {
-  content: 'Proof. ' attr(title);
+  content: 'Proof. ' attr(title);
   font-style: italic;
 }
 .proof::after {
@@ -543,7 +613,8 @@ dl dd {
   bottom: -2px;
 }
 
-/* Definition */
+/* Definitions get their own counter (so they're "Definition 1, 2, ..."
+   independent of theorems) */
 .definition {
   counter-increment: definition;
   display: block;
@@ -556,50 +627,53 @@ dl dd {
   font-style: normal;
 }
 
-/* Center align author name, use small caps and add vertical spacing  */
+/* Author byline under the title — small caps, centered */
 .author {
   margin: 0.85rem 0;
   font-variant-caps: small-caps;
   text-align: center;
 }
 
-/* Sidenotes */
-
+/* ============================================================
+   SIDENOTES — Tufte-style margin notes
+   On wide screens they float to the right margin; on narrow
+   screens (handled below) they collapse into expandable inline
+   notes.
+   ============================================================ */
 .sidenote {
   font-size: 0.8rem;
   float: right;
   clear: right;
   width: 18vw;
-  margin-right: -20vw;
+  margin-right: -20vw;        /* push out into the right margin */
   margin-bottom: 1em;
   text-indent: 0;
-  /* Right sidenotes explicitly aligned to left for wide screens */
-  text-align: left;
+  text-align: left;           /* explicit left-align even when body is justified */
 }
 
+/* Left-margin variant: <span class="sidenote left"> */
 .sidenote.left {
   float: left;
   margin-left: -20vw;
   margin-bottom: 1em;
   text-indent: 0;
-  /* Left sidenotes explicitly aligned to right for wide screens */
   text-align: right;
 }
 
-/* Justify all sidenotes for wide screens when `text-justify` class is used */
+/* When the body is justified, justify sidenotes too */
 body.text-justify .sidenote,
 body.text-justify .sidenote.left {
     text-align: justify;
 }
 
-/* (WIP) add border when a sidenote is clicked on */
+/* When a sidenote is the URL fragment target, highlight it */
 .sidenote:target {
   border: var(--sidenote-target-border-color) 1.5px solid;
   padding: 0 .5rem;
   scroll-margin-block-start: 10rem;
 }
 
-/* sidenote counter */
+/* Sidenote auto-numbering */
 .sidenote-number {
   counter-increment: sidenote-counter;
 }
@@ -610,7 +684,7 @@ body.text-justify .sidenote.left {
   vertical-align: baseline;
 }
 
-/* add number in main content */
+/* Superscript number in the body text */
 .sidenote-number::after {
   content: counter(sidenote-counter);
   font-size: 0.7rem;
@@ -618,24 +692,25 @@ body.text-justify .sidenote.left {
   left: 0.1rem;
 }
 
-/* add number in front of the sidenote */
+/* Matching number at the start of the sidenote itself */
 .sidenote-number ~ .sidenote::before {
   content: counter(sidenote-counter) ' ';
   font-size: 0.7rem;
   top: -0.5rem;
 }
 
+/* The "click to expand" toggle is invisible on wide screens */
 label.sidenote-toggle:not(.sidenote-number) {
   display: none;
 }
 
-/* sidenotes inside blockquotes are indented more */
+/* Sidenotes inside blockquotes need a deeper push to clear the indent */
 blockquote .sidenote {
   margin-right: -24vw;
   width: 18vw;
 }
 
-
+/* Toggle plumbing — the checkbox is always hidden, the label is the click target */
 label.sidenote-toggle {
   display: inline;
   cursor: pointer;
@@ -645,6 +720,7 @@ input.sidenote-toggle {
   display: none;
 }
 
+/* Narrow screens: sidenotes collapse and become click-to-expand */
 @media (max-width: 1050px) {
   label.sidenote-toggle:not(.sidenote-number) {
     display: inline;
@@ -661,24 +737,26 @@ input.sidenote-toggle {
     width: 95%;
   }
 
-  /* All sidenotes explicitly aligned to left for narrow screens */
+  /* On narrow screens, force left-align even on left-variants */
   .sidenote-toggle:checked + .sidenote.left {
     text-align: left;
   }
 
-  /* Justify all sidenotes for narrow screens when `text-justify` class is used */
+  /* And justify when body is justified */
   body.text-justify .sidenote-toggle:checked + .sidenote.left {
     text-align: justify;
   }
 
-  /* tweak indentation of sidenote inside a blockquote */
+  /* Tighter blockquote sidenote on narrow screens */
   blockquote .sidenote {
     margin-right: -25vw;
     width: 16vw;
   }
 }
 
-/* Make footnote text smaller */
+/* ============================================================
+   FOOTNOTES (bottom-of-page <div class="footnotes">)
+   ============================================================ */
 .footnotes p {
   line-height: 1.5;
   font-size: 85%;
@@ -688,7 +766,9 @@ input.sidenote-toggle {
   border-top: 1px solid var(--footnotes-border-color);
 }
 
-/* Center title and paragraph */
+/* ============================================================
+   ABSTRACT BLOCK — centered intro under the title
+   ============================================================ */
 .abstract,
 .abstract p {
   text-align: center;
@@ -702,11 +782,15 @@ input.sidenote-toggle {
   margin-bottom: -0.2rem;
 }
 
-/* Format the LaTeX symbol correctly (a higher up, e lower) */
+/* ============================================================
+   THE LATEX LOGO
+   The classic raised "A" and lowered "E" rendered with two
+   nested <span>s inside <span class="latex">.
+   ============================================================ */
 .latex span:nth-child(1) {
   text-transform: uppercase;
   font-size: 0.75em;
-  vertical-align: 0.28em;
+  vertical-align: 0.28em;        /* lift the A */
   margin-left: -0.48em;
   margin-right: -0.15em;
   line-height: 1ex;
@@ -714,18 +798,20 @@ input.sidenote-toggle {
 
 .latex span:nth-child(2) {
   text-transform: uppercase;
-  vertical-align: -0.5ex;
+  vertical-align: -0.5ex;        /* drop the E */
   margin-left: -0.1667em;
   margin-right: -0.125em;
   line-height: 1ex;
 }
 
-/* Prevent line breaks inside an element */
+/* Helper: stop a phrase from line-wrapping */
 .whitespace-nowrap {
   white-space: nowrap;
 }
 
-/* Heading typography */
+/* ============================================================
+   HEADING TYPOGRAPHY (sizes + line heights)
+   ============================================================ */
 h1 {
   font-size: 2.5rem;
   line-height: 3.25rem;
@@ -753,6 +839,7 @@ h5 {
   margin-top: 1.8rem;
 }
 
+/* h6 is rendered italic, normal weight — like a "subsubsub" head */
 h6 {
   font-size: 1rem;
   font-style: italic;
@@ -767,16 +854,19 @@ h6 {
   line-height: 1.625rem;
 }
 
+/* Tighten spacing when an h2 immediately follows the title h1 */
 h1 + h2 {
   margin-top: 1.625rem;
 }
 
+/* Tighten spacing when headings stack (no body text in between) */
 h2 + h3,
 h3 + h4,
 h4 + h5 {
   margin-top: 0.8rem;
 }
 
+/* h6 right under h5 actually overlaps slightly (negative margin) */
 h5 + h6 {
   margin-top: -0.8rem;
 }
@@ -789,30 +879,35 @@ h6 {
   margin-bottom: 0.8rem;
 }
 
-/* =========================
-   Fixed-left sidebar that does NOT push the centered LaTeX “paper”
-   ========================= */
+/* ============================================================
+   FIXED-LEFT SIDEBAR
+   Custom add-on (not part of LaTeX.css). The sidebar is taken
+   out of normal flow and pinned to the left edge so it doesn't
+   push the centered "paper" off-center. On narrow screens it
+   collapses to a horizontal top bar (handled further down).
+   ============================================================ */
 
 :root {
-  /* Match LaTeX.css paper sizing */
+  /* These vars match the body's max-width + padding so the
+     sidebar can compute its position relative to the paper. */
   --paper-max: 80ch;
   --paper-pad-x: 1.25rem;
   --paper-pad-y: 2rem;
   --paper-outer: calc(var(--paper-max) + (2 * var(--paper-pad-x)));
 
-  /* Sidebar sizing */
+  /* Sidebar size knobs */
   --sidebar-width: 14rem;
   --sidebar-left-pad: 1.25rem; /* set to 0 for true flush-left */
 }
 
 /* IMPORTANT:
-   Do NOT set display:grid or flex on body here.
-   Let LaTeX.css keep body centered normally. */
+   Body stays normally centered. The sidebar is position:fixed
+   (out of flow), so it does NOT shift the body. */
 body.has-sidebar {
   /* no layout changes needed */
 }
 
-/* Sidebar is out of flow, pinned to left */
+/* The sidebar itself — pinned to the viewport's left edge */
 body.has-sidebar .sidebar {
   position: fixed;
   top: var(--paper-pad-y);
@@ -826,36 +921,36 @@ body.has-sidebar .sidebar {
   border-right: var(--border-width-thin) solid var(--table-border-color);
 
   max-height: calc(100vh - (2 * var(--paper-pad-y)));
-  overflow: auto;
+  overflow: auto;            /* scroll if nav is taller than viewport */
   z-index: 10;
 }
 
-/* Keep “Contents” at true h2 size, but fix spacing */
+/* "Contents" heading in the sidebar — keep h2 size but no big top margin */
 body.has-sidebar .sidebar h2 {
-  font-size: 1.7rem;      /* LaTeX.css h2 size */
-  line-height: 2rem;      /* LaTeX.css h2 line-height */
-  margin: 0 0 0.75rem 0;  /* no huge top margin inside sidebar */
+  font-size: 1.7rem;
+  line-height: 2rem;
+  margin: 0 0 0.75rem 0;
 }
 
-/* Ordered list (keep numbering) */
+/* Sidebar list */
 body.has-sidebar .sidebar ol {
   margin: 0;
   font-size: 0.90rem;
-  padding-left: 2rem;     /* controls number indent */
+  padding-left: 2rem;
 }
 
 body.has-sidebar .sidebar li + li {
   margin-top: 0.6rem;
 }
 
-/* Style the numbers (markers) */
+/* Make the auto-generated list numbers bold */
 body.has-sidebar .sidebar li::marker {
   color: var(--body-color);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
-/* Sidebar links: bold + black (no red/purple) */
+/* Sidebar links — black + bold instead of red */
 body.has-sidebar .sidebar a,
 body.has-sidebar .sidebar a:visited {
   color: var(--body-color);
@@ -868,21 +963,21 @@ body.has-sidebar .sidebar a:hover {
   text-underline-offset: 2px;
 }
 
-/* Optional: mark current page */
+/* Mark current page with an underline (uses aria-current="page") */
 body.has-sidebar .sidebar a[aria-current="page"] {
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
-/* =========================
-   SMALL SCREENS: turn sidebar into a top bar (prevents overlap)
-   ========================= */
+/* ============================================================
+   SIDEBAR — narrow-screen collapse to horizontal top bar
+   ============================================================ */
 @media (max-width: 1025px) {
   body.has-sidebar .sidebar {
-    position: sticky;                 /* stays visible when scrolling */
+    position: sticky;          /* stays at the top while scrolling */
     top: 0;
 
-    width: auto;                      /* stays within LaTeX “paper” width */
+    width: auto;
     max-height: none;
     overflow: visible;
 
@@ -892,30 +987,30 @@ body.has-sidebar .sidebar a[aria-current="page"] {
     border-right: none;
     border-bottom: var(--border-width-thin) solid var(--table-border-color);
 
-    padding: 0.75rem 0;               /* compact top bar */
+    padding: 0.75rem 0;
     margin: 0 0 1rem 0;
   }
 
-  /* Hide the "Contents" heading to keep the bar short */
+  /* Hide "Contents" label on the compact bar */
   body.has-sidebar .sidebar h2 {
     display: none;
   }
 
-  /* Make the OL horizontal and REMOVE numbering */
+  /* Lay items out horizontally and drop numbering */
   body.has-sidebar .sidebar ol {
     justify-content: center;
 	margin: 0;
     padding: 0;
     font-size: 0.9rem;
 
-    list-style: none;                 /* removes <ol> 1,2,3... */
+    list-style: none;
     display: flex;
-    flex-wrap: wrap;                  /* wraps on very small screens */
-    gap: 1.5rem;                      /* spacing between items */
+    flex-wrap: wrap;
+    gap: 1.5rem;
     align-items: baseline;
   }
 
-  /* Kill any numbering you may have added earlier via counters */
+  /* Kill any pseudo-element numbers we added earlier */
   body.has-sidebar .sidebar li::before {
     content: none;
   }
@@ -926,35 +1021,37 @@ body.has-sidebar .sidebar a[aria-current="page"] {
   }
 }
 
-/* =========================
-   Trips TOC — nested leaders + dot-leader subitems
-   Leaders: bold, no dots/year  (1 SCHOOL TRIPS)
-   Subitems: regular + dots + year (1.1 TRIP ... 2025)
-   ========================= */
+/* ============================================================
+   TRIPS-PAGE TABLE OF CONTENTS — nested with dot leaders
+   Custom TOC where:
+   - Top-level entries are bold "leaders" (e.g. 1 SCHOOL TRIPS)
+   - Sub-entries get title + dot leaders + year, like LaTeX's
+     \dotfill (1.1 NEW YORK CITY ... 2025)
+   ============================================================ */
 
 :root {
-  --toc-title-col: 5rem; /* fixed title col for subitems so dots align */
+  --toc-title-col: 5rem; /* fixed title-column width so the dots line up */
 }
 
-/* Prevent global justify rules from stretching TOC text */
+/* Don't justify the TOC even if the body is justified */
 .toc-dotfill { text-align: left; text-align-last: left; }
 
-/* Always black links */
+/* Black links throughout the TOC */
 .toc-dotfill a,
 .toc-dotfill a:visited {
   color: var(--body-color);
   text-decoration: none;
 }
 
-/* Remove default list markers */
+/* Strip the default ordered-list numbers — we draw our own */
 .toc-dotfill ol { list-style: none !important; margin: 0; padding-left: 0; }
 .toc-dotfill li::marker { content: "" !important; }
 
-/* ----- Counters ----- */
+/* Counters: top-level "toc1" (1, 2, ...) and per-section "toc2" (1.1, 1.2, ...) */
 .toc-dotfill > ol { counter-reset: toc1; }
 .toc-dotfill > ol > li { counter-increment: toc1; counter-reset: toc2; }
 
-/* ----- Level 1 (leaders) as a 2-col grid: [1] [LEADER TEXT] ----- */
+/* Top-level row: 2-column grid → [number] [leader text] */
 .toc-dotfill > ol > li {
   display: grid;
   grid-template-columns: 2.25rem 1fr;
@@ -964,7 +1061,7 @@ body.has-sidebar .sidebar a[aria-current="page"] {
 }
 
 .toc-dotfill > ol > li::before {
-  content: counter(toc1) " "; /* NO period */
+  content: counter(toc1) " "; /* "1 ", "2 ", … (no period to match LaTeX style) */
   grid-column: 1;
   justify-self: end;
   font-weight: 700;
@@ -973,41 +1070,41 @@ body.has-sidebar .sidebar a[aria-current="page"] {
 .toc-dotfill > ol > li > .toc-leader,
 .toc-dotfill > ol > li > a.toc-leader {
   grid-column: 2;
-  font-weight: 700;          /* leaders bold */
+  font-weight: 700;
   display: inline-block;
 }
 
-/* Indent sublist under the leader */
+/* Indent the nested sub-list under each leader */
 .toc-dotfill > ol > li > ol {
   grid-column: 2;
   margin-top: 0.35rem;
-  padding-left: 1.5rem;      /* small indentation for subheadings */
+  padding-left: 1.5rem;
 }
 
-/* ----- Level 2 (subitems) ----- */
+/* Sub-entries (level 2) */
 .toc-dotfill > ol > li > ol > li {
   counter-increment: toc2;
   margin-top: 0.45rem;
 }
 
-/* Kill LaTeX.css injected numbering ONLY on subitems */
+/* Kill the inherited LaTeX.css ::before on subitems (we redo it below) */
 .toc-dotfill > ol > li > ol > li::before {
   content: none !important;
   display: none !important;
 }
 
-/* Subitem row layout: [1.1] [title col] [dots fill] [year] */
+/* Sub-entry layout: 4 columns → [1.1] [TITLE] [dots fill] [YEAR] */
 .toc-dotfill > ol > li > ol > li > a {
   display: grid;
   grid-template-columns: 0rem var(--toc-title-col) 1fr auto;
   column-gap: 0.75rem;
   align-items: baseline;
 
-  font-weight: 400;          /* subitems regular */
+  font-weight: 400;
   padding: 0.15rem 0;
 }
 
-/* "1.1 " numbering */
+/* "1.1 ", "1.2 ", … prefix on each sub-entry */
 .toc-dotfill > ol > li > ol > li > a::before {
   content: counter(toc1) "." counter(toc2) " ";
   grid-column: 1;
@@ -1015,7 +1112,8 @@ body.has-sidebar .sidebar a[aria-current="page"] {
   font-weight: 400;
 }
 
-/* Title shrink-wrap + mask dots under letters */
+/* The title sits in column 2. The background paint masks the
+   dot-leader span underneath so dots only show beyond the title. */
 .toc-dotfill > ol > li > ol .toc-title {
   grid-column: 2;
   white-space: nowrap;
@@ -1029,7 +1127,7 @@ body.has-sidebar .sidebar a[aria-current="page"] {
   padding-right: 0.6rem;
 }
 
-/* Dots fill + clip */
+/* The dot-leader ". . . ." filler in column 3, clipped to fit */
 .toc-dotfill > ol > li > ol .toc-dots {
   grid-column: 3;
   overflow: hidden;
@@ -1038,7 +1136,7 @@ body.has-sidebar .sidebar a[aria-current="page"] {
   z-index: 1;
 }
 
-/* Year right */
+/* The year (or label) on the right edge */
 .toc-dotfill > ol > li > ol .toc-year {
   grid-column: 4;
   justify-self: end;
@@ -1046,19 +1144,22 @@ body.has-sidebar .sidebar a[aria-current="page"] {
   font-weight: 400;
 }
 
-/* Hover underline (leaders + subitems, including dots) */
+/* Underline on hover/focus for accessibility */
 .toc-dotfill a:hover,
 .toc-dotfill a:focus-visible {
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
-
-/* Ordered list: replace native markers with a stylable counter */
+/* ============================================================
+   SIDEBAR list-counter override
+   Replaces the default native ::marker numbers with a styled
+   ::before counter so the numbers can be bold and aligned.
+   ============================================================ */
 body.has-sidebar .sidebar ol {
   margin: 0;
-  padding-left: 0;           /* we will handle indent ourselves */
-  list-style: none;          /* remove native ::marker numbers */
+  padding-left: 0;
+  list-style: none;
   counter-reset: side;
 }
 
@@ -1066,7 +1167,6 @@ body.has-sidebar .sidebar ol > li {
   counter-increment: side;
 }
 
-/* Bold, aligned numbers */
 body.has-sidebar .sidebar ol > li::before {
   content: counter(side);
   color: var(--body-color);
@@ -1074,17 +1174,24 @@ body.has-sidebar .sidebar ol > li::before {
   font-variant-numeric: tabular-nums;
 
   display: inline-block;
-  width: 2rem;               /* controls number column width */
+  width: 2rem;               /* number column width */
   text-align: right;
   margin-right: 0.75rem;
 }
 
-/* ── Gantt Chart ── */
+/* ============================================================
+   GANTT CHART — table-based degree timeline
+   Built as an HTML table where each <td> is one half-semester
+   slot. Filled cells get class `bar-done` / `bar-current` /
+   `bar-plan`; cells flanking a filled span use `no-left` /
+   `no-right` to hide the internal vertical borders so the
+   "bar" reads as one continuous block.
+   ============================================================ */
 table.gantt {
   width: 100% !important;
   border-collapse: collapse;
   font-size: 0.9rem;
-  table-layout: fixed;
+  table-layout: fixed;       /* equal-width columns */
   border-top: var(--border-width-thick) solid var(--table-border-color);
   border-bottom: var(--border-width-thick) solid var(--table-border-color);
 }
@@ -1103,10 +1210,11 @@ table.gantt thead th {
   border-bottom: var(--border-width-thin) solid var(--table-border-color);
 }
 
-/* Hide internal semester borders */
+/* Hide internal borders on bar segments so they merge visually */
 table.gantt .no-right  { border-right: none; }
 table.gantt .no-left   { border-left: none; }
 
+/* Row label (degree name) — italic, right-aligned */
 table.gantt .gantt-label {
   text-align: right;
   padding-right: 0.6rem;
@@ -1114,17 +1222,21 @@ table.gantt .gantt-label {
   white-space: nowrap;
 }
 
-/* ── Bar fills ── */
-table.gantt .bar-done { background: #404040; }
-table.gantt .bar-plan { background: hsl(0, 0%, 88%); }
-table.gantt .bar-current { background: hsl(90, 15%, 70%);  }
+/* Bar fills — completed (dark), planned (light), current (muted green) */
+table.gantt .bar-done    { background: #404040; }
+table.gantt .bar-plan    { background: hsl(0, 0%, 88%); }
+table.gantt .bar-current { background: hsl(90, 15%, 70%); }
 
-/* ── Narrow screens ── */
+/* Smaller font on phones */
 @media (max-width: 640px) {
   table.gantt { font-size: 0.78rem; }
 }
 
-/* Remove top rule from the ellipsis row so it reads as a continuation */
+/* ============================================================
+   DEV LOG "CONTINUED" ROW
+   The trailing "..." row in the dev log table — drops the top
+   border so it reads as a continuation rather than a new row.
+   ============================================================ */
 .dev-log-continued td {
   text-align: center;
   letter-spacing: 0.25em;
@@ -1132,9 +1244,11 @@ table.gantt .bar-current { background: hsl(90, 15%, 70%);  }
 }
 
 
-/* =========================
-   Back-to-top button
-   ========================= */
+/* ============================================================
+   BACK-TO-TOP BUTTON
+   Fixed bottom-right button, hidden until scrolled. JS toggles
+   the .visible class to fade it in.
+   ============================================================ */
 .back-to-top {
   position: fixed;
   bottom: 1.5rem;
@@ -1154,7 +1268,7 @@ table.gantt .bar-current { background: hsl(90, 15%, 70%);  }
   text-decoration: none;
 
   opacity: 0;
-  pointer-events: none;
+  pointer-events: none;       /* unclickable while invisible */
   transition: opacity 0.25s;
 }
 .back-to-top.visible {
@@ -1170,9 +1284,11 @@ table.gantt .bar-current { background: hsl(90, 15%, 70%);  }
   color: var(--body-color);
 }
 
-/* =========================
-   Photo gallery grid
-   ========================= */
+/* ============================================================
+   PHOTO GALLERY GRID
+   Two-column grid on wide screens, single column on phones.
+   Used on Trips page.
+   ============================================================ */
 .gallery {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -1185,9 +1301,13 @@ table.gantt .bar-current { background: hsl(90, 15%, 70%);  }
 .gallery figure img {
   width: 100%;
   height: auto;
-  cursor: pointer;
+  cursor: pointer;            /* signal "clickable to enlarge" */
   transition: transform 0.2s ease;
 } 
+/* The block below is intentionally commented out.
+   Claude Code originally added these rules; the
+   `counter-increment: none` line was killing the
+   page-wide figure numbering. Leave commented. */
 /*.gallery figure img:hover {
   transform: scale(1.03);
 }
@@ -1202,22 +1322,25 @@ table.gantt .bar-current { background: hsl(90, 15%, 70%);  }
 } */
 @media (max-width: 640px) {
   .gallery {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr;   /* single column on phones */
   }
 }
 
-/* =========================
-   Image lightbox
-   ========================= */
+/* ============================================================
+   IMAGE LIGHTBOX
+   Full-screen overlay shown when a gallery image is clicked.
+   JS toggles `.active` to display the overlay and swaps the
+   <img src> as the user navigates with the prev/next buttons.
+   ============================================================ */
 .lightbox-overlay {
-  display: none;
+  display: none;              /* hidden until .active */
   position: fixed;
-  inset: 0;
+  inset: 0;                   /* shorthand for top/right/bottom/left: 0 */
   z-index: 200;
   background: rgba(0, 0, 0, 0.85);
   justify-content: center;
   align-items: center;
-  cursor: pointer;
+  cursor: pointer;            /* clicking the backdrop closes */
 }
 .lightbox-overlay.active {
   display: flex;
@@ -1226,9 +1349,10 @@ table.gantt .bar-current { background: hsl(90, 15%, 70%);  }
   max-width: 90vw;
   max-height: 90vh;
   object-fit: contain;
-  cursor: default;
+  cursor: default;            /* clicking the image itself doesn't close */
   border-radius: 2px;
 }
+/* Close button (×) — top right */
 .lightbox-close {
   position: fixed;
   top: 1rem;
@@ -1242,6 +1366,7 @@ table.gantt .bar-current { background: hsl(90, 15%, 70%);  }
   font-family: inherit;
   line-height: 1;
 }
+/* Prev/next chevrons — vertically centered on each side */
 .lightbox-prev,
 .lightbox-next {
   position: fixed;
@@ -1266,19 +1391,23 @@ table.gantt .bar-current { background: hsl(90, 15%, 70%);  }
 }
 .lightbox-prev { left: 1rem; }
 .lightbox-next { right: 1rem; }
+/* JS adds .hidden when at the first/last image to disable the chevron */
 .lightbox-prev.hidden,
 .lightbox-next.hidden {
   display: none;
 }
 
 
-/* =========================
-   Responsive video embeds
-   ========================= */
+/* ============================================================
+   RESPONSIVE VIDEO EMBEDS
+   Wraps an <iframe> in a div whose padding-bottom locks it to
+   16:9 aspect ratio. The iframe is absolutely positioned to
+   fill the wrapper.
+   ============================================================ */
 .video-wrap {
   position: relative;
   width: 100%;
-  padding-bottom: 56.25%; /* 16:9 */
+  padding-bottom: 56.25%;     /* 9 / 16 = 0.5625 → 16:9 */
   height: 0;
   overflow: hidden;
   margin-top: 1rem;
@@ -1292,9 +1421,11 @@ table.gantt .bar-current { background: hsl(90, 15%, 70%);  }
   border: 0;
 }
 
-/* =========================
-   Reading progress bar
-   ========================= */
+/* ============================================================
+   READING-PROGRESS BAR
+   Thin bar at the very top of the viewport. JS sets its width
+   based on scroll percent.
+   ============================================================ */
 .progress-bar {
   position: fixed;
   top: 0;
@@ -1307,34 +1438,38 @@ table.gantt .bar-current { background: hsl(90, 15%, 70%);  }
 }
 
 
-/* =========================
-   Mobile-first responsive fixes
-   ========================= */
+/* ============================================================
+   MOBILE-FIRST RESPONSIVE FIXES
+   Catch-all overrides applied at narrow widths.
+   ============================================================ */
 
-/* Base: ensure body doesn't overflow on small screens */
+/* Belt-and-suspenders: prevent horizontal overflow from any
+   stray-wide element (long URLs, etc.) on every screen size. */
 body {
   overflow-x: hidden;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
 
-/* Tables: wrap all in scroll container via JS on mobile */
+/* Tables get auto-wrapped in this scroll container by JS so
+   wide tables can scroll horizontally without breaking layout. */
 article table {
   width: 100%;
 }
 .table-scroll-wrap {
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: touch;  /* momentum scroll on iOS */
   margin: 1em 0;
 }
 
-/* Small screens */
+/* ----- Phone-size overrides (<= 640px) ----- */
 @media (max-width: 640px) {
   body {
     padding: 1rem 0.75rem;
     font-size: 0.95rem;
   }
 
+  /* Smaller headings on phones */
   h1 {
     font-size: 1.8rem;
     line-height: 2.2rem;
@@ -1354,12 +1489,12 @@ article table {
     margin: 1.25rem 0;
   }
 
-  /* Content max-width */
+  /* Stop the content wrapper capping at a desktop width */
   .content {
     max-width: 100%;
   }
 
-  /* TOC: tighter on mobile */
+  /* Tighten the dot-leader TOC for phone widths */
   .toc-dotfill > ol > li > ol > li > a {
     grid-template-columns: 0rem auto 1fr auto;
     column-gap: 0.4rem;
@@ -1370,7 +1505,7 @@ article table {
     column-gap: 0.4rem;
   }
 
-  /* Gantt chart: smaller on mobile */
+  /* Shrink the Gantt chart so it fits on a phone */
   table.gantt {
     font-size: 0.7rem;
   }
@@ -1382,19 +1517,19 @@ article table {
     padding-right: 0.3rem;
   }
 
-  /* Figures: less margin */
+  /* Drop figure side margins on phones */
   figure {
     margin-left: 0;
     margin-right: 0;
   }
 
-  /* Lightbox: more room on mobile */
+  /* Allow lightbox image to use a bit more screen on phones */
   .lightbox-overlay img {
     max-width: 95vw;
     max-height: 85vh;
   }
 
-  /* Back to top: smaller */
+  /* Smaller back-to-top button on phones */
   .back-to-top {
     bottom: 1rem;
     right: 0.5rem;
@@ -1402,12 +1537,12 @@ article table {
     font-size: 0.9rem;
   }
 
-  /* Footnotes tighter */
+  /* Slightly smaller footnote text */
   .footnotes p {
     font-size: 80%;
   }
 
-  /* Video embeds */
+  /* Let video embeds bleed into the body padding so they fill the screen */
   .video-wrap {
     margin-left: -0.75rem;
     margin-right: -0.75rem;
@@ -1416,7 +1551,7 @@ article table {
 
 }
 
-/* Medium screens — tablet-ish tweaks */
+/* ----- Tablet-ish range (641px – 1025px) ----- */
 @media (max-width: 1025px) and (min-width: 641px) {
   h1 {
     font-size: 2.1rem;
@@ -1426,10 +1561,13 @@ article table {
   }
 }
 
-/* =========================
-   Print stylesheet
-   ========================= */
+/* ============================================================
+   PRINT STYLESHEET
+   Strip interactive chrome, force black-on-white, and append
+   URL after every link so printed pages are still useful.
+   ============================================================ */
 @media print {
+  /* Hide things that don't make sense on paper */
   .sidebar,
   .back-to-top,
   .lightbox-overlay,
@@ -1437,24 +1575,28 @@ article table {
     display: none !important;
   }
 
+  /* Use full page width, no centered "paper" */
   body.has-sidebar {
     max-width: 100%;
     padding: 0;
     margin: 0;
   }
 
+  /* Force monochrome theme regardless of dark mode */
   :root {
     --body-color: #000;
     --body-bg-color: #fff;
     --table-border-color: #000;
   }
 
+  /* Print the URL next to every link */
   a[href]::after {
     content: " (" attr(href) ")";
     font-size: 0.8em;
     font-weight: normal;
   }
-  /* Don't show URLs for internal/anchor links */
+  /* …except for in-page anchors, JS handlers, and TOC/sidebar links
+     where the URL would just be noise */
   a[href^="#"]::after,
   a[href^="javascript"]::after,
   .toc-dotfill a::after,
@@ -1462,9 +1604,11 @@ article table {
     content: none;
   }
 
+  /* Try not to split figures or tables across pages */
   figure, table {
     break-inside: avoid;
   }
+  /* Don't leave a heading orphaned at the bottom of a page */
   h2, h3 {
     break-after: avoid;
   }
