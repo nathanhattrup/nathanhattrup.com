@@ -15,7 +15,7 @@ Options:
     --verbose         Show detailed output for each image
 
 Requirements:
-    pip install Pillow
+    pip install Pillow pillow-heif
 """
 
 import os
@@ -30,9 +30,19 @@ except ImportError:
     print("Install it with: pip install Pillow")
     sys.exit(1)
 
+# Try to import HEIC support (optional but recommended)
+HEIC_SUPPORTED = False
+try:
+    import pillow_heif
+    pillow_heif.register_heif_opener()  # Register HEIC/HEIF with Pillow
+    HEIC_SUPPORTED = True
+except ImportError:
+    pass  # HEIC won't be processed, but script still works for other formats
+
 
 # Supported image extensions
 SUPPORTED_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.webp', '.JPG', '.JPEG', '.PNG', '.WEBP'}
+HEIC_EXTENSIONS = {'.heic', '.heif', '.HEIC', '.HEIF'}
 
 
 def get_file_size_str(size_bytes):
@@ -102,6 +112,19 @@ def compress_image(filepath, quality=80, max_width=1920, verbose=False):
             elif ext == '.webp':
                 img.save(filepath, 'WEBP', quality=quality, optimize=True)
             
+            elif ext in {'.heic', '.heif'}:
+                # Convert HEIC/HEIF to JPEG (browsers don't support HEIC)
+                if img.mode in ('RGBA', 'P'):
+                    img = img.convert('RGB')
+                # Save as .jpg with same base name
+                new_filepath = str(Path(filepath).with_suffix('.jpg'))
+                img.save(new_filepath, 'JPEG', quality=quality, optimize=True)
+                # Delete original HEIC file
+                os.remove(filepath)
+                filepath = new_filepath  # Update for size calculation
+                if verbose:
+                    print(f"  Converted to: {new_filepath}")
+            
             new_size = os.path.getsize(filepath)
             
             if verbose:
@@ -118,10 +141,15 @@ def compress_image(filepath, quality=80, max_width=1920, verbose=False):
 
 def find_images(directory):
     """Recursively find all supported image files."""
+    # Combine base extensions with HEIC if supported
+    valid_extensions = SUPPORTED_EXTENSIONS.copy()
+    if HEIC_SUPPORTED:
+        valid_extensions.update(HEIC_EXTENSIONS)
+    
     images = []
     for root, dirs, files in os.walk(directory):
         for filename in files:
-            if Path(filename).suffix in SUPPORTED_EXTENSIONS:
+            if Path(filename).suffix in valid_extensions:
                 images.append(os.path.join(root, filename))
     return sorted(images)
 
@@ -169,7 +197,12 @@ Examples:
     
     if not images:
         print(f"No supported images found in '{images_dir}/'")
-        print(f"Supported formats: {', '.join(sorted(SUPPORTED_EXTENSIONS))}")
+        all_formats = SUPPORTED_EXTENSIONS.copy()
+        if HEIC_SUPPORTED:
+            all_formats.update(HEIC_EXTENSIONS)
+        print(f"Supported formats: {', '.join(sorted(all_formats))}")
+        if not HEIC_SUPPORTED:
+            print("(HEIC support available with: pip install pillow-heif)")
         sys.exit(0)
     
     print(f"\n{'='*60}")
@@ -179,6 +212,7 @@ Examples:
     print(f"Quality:    {args.quality}")
     print(f"Max width:  {args.max_width}px")
     print(f"Images:     {len(images)} found")
+    print(f"HEIC:       {'enabled' if HEIC_SUPPORTED else 'disabled (pip install pillow-heif)'}")
     print(f"Mode:       {'DRY RUN (no changes)' if args.dry_run else 'COMPRESS'}")
     print(f"{'='*60}\n")
     
@@ -239,3 +273,5 @@ Examples:
 
 if __name__ == '__main__':
     main()
+
+    ##use --images-dir to specify what directory

@@ -1308,9 +1308,9 @@ table.gantt .bar-current { background: hsl(90, 15%, 70%); }
    Claude Code originally added these rules; the
    `counter-increment: none` line was killing the
    page-wide figure numbering. Leave commented. */
-/*.gallery figure img:hover {
+.gallery figure img:hover {
   transform: scale(1.03);
-}
+} /*
 .gallery figure {
   overflow: hidden;
 }

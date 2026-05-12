@@ -18,7 +18,6 @@
           <li><a href="index.html">HOME</a></li>
           <li><a href="courses.html">COURSES</a></li>
           <li><a href="projects.html" aria-current="page">PROJECTS</a></li>          
-		      <li><a href="experience.html">EXPERIENCE</a></li>
 		      <li><a href="trips.html">TRIPS</a></li>
         </ol>
       </nav>
@@ -31,7 +30,7 @@
 </header>
 
 <div class="abstract">
-  <p>
+  <p>Projects are how I learn best, and I hope to be adding to much more to this list over time!
   </p>
 </div>
 
@@ -45,23 +44,15 @@
       <ol>
         <li>
           <a href="#306">
-            <span class="toc-title"><b>MICROCONTROLLER/IOT AUTONOMOUS CAR</b></span>
-            <span class="toc-dots"
-              aria-hidden="true">.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.</span>
-            <span class="toc-year"><b>SP26</b></span>
-          </a>
-        </li>
-        <li>
-          <a href="#526">
-            <span class="toc-title">MIDI TESLA COIL</span>
+            <span class="toc-title">MICROCONTROLLER/IOT AUTONOMOUS CAR</span>
             <span class="toc-dots"
               aria-hidden="true">.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.</span>
             <span class="toc-year">SP26</span>
           </a>
         </li>
-                <li>
-          <a href="#sylva">
-            <span class="toc-title">TREE FARM SURVEY DRONE SERVICE</span>
+        <li>
+          <a href="#526">
+            <span class="toc-title">MIDI TESLA COIL</span>
             <span class="toc-dots"
               aria-hidden="true">.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.&nbsp;&nbsp;.</span>
             <span class="toc-year">SP26</span>
@@ -77,7 +68,7 @@
         </li>
       </ol>
     </li>
-    <li>
+    <!--<li>
       <a href="#personal">
         <span class="toc-leader"><b>PERSONAL PROJECTS</b></span>
       </a>
@@ -91,7 +82,7 @@
           </a>
         </li>
       </ol>
-    </li>
+    </li>-->
   </ol>
 </nav>
 
@@ -101,10 +92,100 @@
 
 <h2 id="school">School Projects</h2>
 <h3 id="306">ECE 306 &mdash; Microcontroller/IOT Autonomous Car</h3>
+<p>
+  This was the term project for our embedded systems class. We used TI's MSP430FR2355 LaunchPad kit a base FRAM microcontroller platform and slowly built things up week to week. Coding was done in <code>C</code>, and over the course of the semester, we ended up adding several boards that housed an LCD screen, a thumbwheel, an IR emitter and detectors, motors, and an ESP32 module. Projects evolved in complexity and ultimately culminated in IOT control of our car over Wi-Fi and a black-line-following algorithm. These were the two sections that comprised the Demo Day at the end of the semester.
+<br><br>
+Line following utilized the IR emitter LED with two IR detector LEDs to the left and right. We used ADC to read these detectors as inputs, giving us a way to measure our car's position over black electrical tape on a white board. I then built a "bang-bang" controller to determine when the car was on/off or partially on the black line, adjusting accordingly. Given more time, I'd like to implement a more robust PID controller. Overall this was the most enjoyable part of the project for me, and I cannot emphasize enough how much I loved spending countless hours in the lab dialing things in.
+<br><br> 
+Serial communication was difficult for me to grasp at first, but after finally getting the ESP32 set up and my car connected to Wi-Fi, I have to admit, it's pretty sick. Someone in years prior made an IOS app that let us easily connect to our cars using just the IP address and a port number. This is how we sent commands to our car. My commands were structured like <code>$$F0200</code>, with <code>$$</code> being the passkey to signify a command, <code>F</code> being an ID to indicate "Forward", and <code>200</code> to signify that the command should last 200x 10ms ticks, or 2 seconds. It was honestly a lot of fun to set up the giant state machine needed to parse and execute every command I had configured.
+<br><br>
+For Demo Day, we started with the IOT Course. In this phase, everyone in class drove around to various numbered pads littered across the floor using the IOT app as a controller. At each pad, we had to display a message noting we arrived. For me, having a command to change my car speed from slow to fast was crucial. The next phase involved using a single command to leave the infamous Pad 8, intercept the white board and black line course, navigate around the circle portion a given number of times, and then exit with a single command. At various points for each step, we were to stop and display messages for 10-20s. The patchy tile gave similar IR readings to the black line, so not initiating my "line intercept" sequence too early was key. I ultimately had to build "white pad detection" logic to make sure it didn't.
+<br><br>
+This project and this course were such valuable learning experiences for me, and I'm so incredibly thankful that I made the decision to step outside of my comfort zone and take it as an EE.
+</p>
+<figure>
+	<img src="images/proj/iotcourse_line.jpeg" alt="IOT Course"/>
+	<figcaption>
+	The IOT course portion of Demo Day.
+	</figcaption>
+</figure>
+<figure>
+  <div class="video-wrap">
+    <iframe
+      src="https://youtu.be/embed/JTyLFQM41hM"
+      title="Line Following"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>
+  </div>
+  <figcaption>Practicing our line following project.</figcaption>
+</figure>
+<figure>
+  <div class="video-wrap">
+    <iframe
+      src="https://youtu.be/embed/qFk6HqirPDU"
+      title="Demo Day"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>
+  </div>
+  <figcaption>My attempt on the black line course on Demo Day.</figcaption>
+</figure>
 
 <h3 id="526">ECE 526 &mdash; MIDI Tesla Coil</h3>
-
-<h3 id="sylva">ECE 526 &mdash; Tree Farm Survey Drone Service</h3>
+<p>This is the tesla coil we built for my analog electronics lab. It's a Dual Resonant Solid State Tesla Coil (DRSSTC) and is essentially made up of the Interrupter, Driver, and Power Bridge boards.<br><br>
+The Interrupter acts as an "enable" in the form of a square wave to signify when the coil can produce a spark. This is also what allows us to create music. 
+If each enable is a spark, then 100 enables per second gives a 100Hz frequency of sound. 
+By varying the Interrupter's input either via PWM or MIDI, we can create sparks at various audible frequencies.<br><br>
+The Driver exists in a kind of feedback loop. It powers the Bridge and at the same time receives feedback from the output of the Bridge at its resonant frequency. 
+The goal is to match that frequency in order to create a super fast ramp up in voltage for a given spark. The analogy our TA, Zander, used was that of pushing someone on a swing. 
+To push the swing higher, you have to time your pushes to match the <i>frequency</i> of the swings. 
+If you try and push while the swing is falling towards you, you'll hurt yourself and kill the momentum of the swing. If you push with the swing as it falls away from you, you'll add to its momentum, pushing it higher. 
+This is what the feedback of the Driver lets us do. <br> <br> 
+I'm so glad I was able to be apart of this class for its maiden offering. I feel like I gained a ton of hands-on experience with not only soldering but more importantly, bench-top testing. That was my biggest takeaway: just how much testing and troubleshooting is needed for building a project like this. As painstaking as it is, the dopamine hit from finally finding a shoddy solder joint or blown IC makes it all worth it. 
+Finally, we ended the semester with a class concert, stringing together six coils at a time. Our coil got a solid 30 minutes of playtime in before kicking the bucket.. Was a sick sendoff to Free Bird, though.<br><br>
+This class and the coil itself were created and administered by <a href="https://www.linkedin.com/" target="_blank">Zander Selleseth</a> and <a href="https://www.linkedin.com/" target="_blank">Alex Kowalewski</a>. All props and credit to them.
+</p>
+<figure>
+	<img src="images/proj/coil_diagram.png" alt="Coil Diagram"/>
+	<figcaption>
+	A component-wise breakdown of the coil. Credit: Zander Selleseth
+	</figcaption>
+</figure>
+<figure>
+	<img src="images/proj/coil_solo.jpeg" alt="Coil Closeup"/>
+	<figcaption>
+	A closeup of our coil during the class concert (second from left).
+	</figcaption>
+</figure>
+<figure>
+	<img src="images/proj/holdingcoil.jpg" alt="Drew and I"/>
+	<figcaption>
+	My partner Drew and I holding our coil after it blew up.
+	</figcaption>
+</figure>
+<figure>
+  <div class="video-wrap">
+    <iframe
+      src="https://youtu.be/embed/bAljaF_PaJE"
+      title="Thunderstruck"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>
+  </div>
+  <figcaption>Class coil concert playing Thunderstruck.</figcaption>
+</figure>
+<figure>
+  <div class="video-wrap">
+    <iframe
+      src="https://youtu.be/embed/BhJXjCNhdWg"
+      title="Free Bird Solo"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>
+  </div>
+  <figcaption>Our tesla coil playing the Free Bird solo.</figcaption>
+</figure>
 
 <h3 id="212">ECE 212 &mdash; LED State Machine Circuit</h3>
 <p>For our final project, we were tasked with designing and building two independent state machines controlling
@@ -115,7 +196,7 @@
 <figure>
   <div class="video-wrap">
     <iframe
-      src="https://www.youtube.com/embed/Ua3HBqnsGAU"
+      src="https://youtu.be/embed/6UoJGQrx310"
       title="ECE 212 testing video"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
       allowfullscreen>
@@ -127,7 +208,7 @@
 <figure>
   <div class="video-wrap">
     <iframe
-      src="https://www.youtube.com/embed/Ov1UCmCjTzw"
+      src="https://youtu.be/embed/8luaNgJAwr4"
       title="ECE 212 finished circuit"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
       allowfullscreen>
@@ -137,8 +218,8 @@
 </figure>
 </p>
 
-<h2 id="personal">Personal Projects</h2>
-<h3 id="eagle">Eagle Scout Project</h3>
+<!--<h2 id="personal">Personal Projects</h2>
+<h3 id="eagle">Eagle Scout Project</h3>-->
 
 </article>
 </main>
