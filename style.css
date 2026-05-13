@@ -974,8 +974,7 @@ body.has-sidebar .sidebar a[aria-current="page"] {
    ============================================================ */
 @media (max-width: 1025px) {
   body.has-sidebar .sidebar {
-    position: sticky;          /* stays at the top while scrolling */
-    top: 0;
+    position: static;          /* stays at top of page, does not follow scroll */
 
     width: auto;
     max-height: none;
