@@ -1029,7 +1029,7 @@ body.has-sidebar .sidebar a[aria-current="page"] {
    ============================================================ */
 
 :root {
-  --toc-title-col: 5rem; /* fixed title-column width so the dots line up */
+  --toc-title-col: 2rem; /* fixed title-column width so the dots line up */
 }
 
 /* Don't justify the TOC even if the body is justified */
