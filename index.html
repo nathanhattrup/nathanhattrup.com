@@ -18,6 +18,7 @@
           <li><a href="courses.html">COURSES</a></li>
           <li><a href="projects.html">PROJECTS</a></li>
           <li><a href="trips.html">TRIPS</a></li>
+          <li><a href="books.html">BOOKS</a></li>
         </ol>
       </nav>
     </aside>
@@ -28,7 +29,7 @@
 	<h1>Nathan Hattrup</h1>
 	<p class="author">
       Last Updated <br />
-      May 21<sup>st</sup>, 2026
+      July 5<sup>th</sup>, 2026
     </p>
 </header>
 
@@ -67,6 +68,14 @@ During my time in electrical engineering, I have also fallen in love with embedd
 Outside of academics, I enjoy competing in powerlifting, exploring the outdoors, and spending time with friends.
 
 <h2>Personal</h2>
+
+<h3>Travel</h3>
+<figure>
+  <div id="globe" aria-label="Spinning globe marking places I have visited"></div>
+  <figcaption>Where I've been around the world!</figcaption>
+  <p>If you want to see more of the highlights, check out my <a href="trips.html">Trips</a> page!</p>
+</figure>
+
 <h3>Currently</h3>
 <ul>
   <li>Interning with Burns & McDonnell</li>
@@ -114,28 +123,12 @@ Not to be too shameless, but if you want to see more, check out my <a href="http
 	</figcaption>
 </figure> -->
 
-<h3>Reading</h3>
-  <p>Once I have a free weekend I'll make a Goodreads account..</p>
-<h4>Currently Reading</h4>
-  <ul>
-  <li><i>The Great Heist</i> by Andrew Badger and David Shedd</li>
-  <li><i>Can't Hurt Me</i> by David Goggins (relistening to the audiobook) </li>
-</ul>
-<h4>Last Read</h4>
-<ul>
-  <li><i>River of Darkness</i> by Buddy Levy</li>
-  <li><i>Robinson Crusoe</i> by Daniel Defoe (audiobook)</li>
-  <li><i>The Ruthless Elimination of Hurry</i> by John Comer</li>
-  <li><i>Catch-22</i> by Joseph Heller</li>
-  <li><i>Mother of God</i> by Paul Rosalie</li>
-</ul>
-
 <div class="footnotes">
 <p id="fn1">1. You can find my meet numbers on my
 <a href="https://www.openpowerlifting.org/u/nathanhattrup" target="_blank">
 OpenPowerlifting</a> page.</p>
-<p>The library, 
-<a href="https://github.com/vincentdoerig/latex-css" target="_blank"><span class="latex">L<span>a</span>T<span>e</span>X</span>.css</a>, 
+<p>The library 
+<a href="https://github.com/vincentdoerig/latex-css" target="_blank"><span class="latex">L<span>a</span>T<span>e</span>X</span>.css</a> 
 was used extensively for this project. </p>
 </div>
 
@@ -152,6 +145,14 @@ was used extensively for this project. </p>
   <img src="" alt="" onclick="event.stopPropagation()">
   <button class="lightbox-next" aria-label="Next" onclick="event.stopPropagation();lightboxNav(1)">&rsaquo;</button>
 </div>
+
+<script src="assets/d3.v7.min.js"></script>
+<script src="assets/topojson-client.min.js"></script>
+<script src="assets/land-110m.js"></script>
+<script src="assets/countries-110m.js"></script>
+<script src="assets/us-states-110m.js"></script>
+<script src="assets/locations.js"></script>
+<script src="assets/globe.js"></script>
 
 <script>
 // Back to top + progress bar

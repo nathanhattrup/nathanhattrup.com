@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books &ndash; Nathan Hattrup</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="prism/prism.css" />
+</head>
+
+<body class="text-justify has-sidebar">
+<div class="progress-bar"></div>
+    <aside class="sidebar" aria-label="Site navigation">
+      <nav>
+        <h2>Contents</h2>
+        <ol>
+          <li><a href="index.html">HOME</a></li>
+          <li><a href="courses.html">COURSES</a></li>
+          <li><a href="projects.html">PROJECTS</a></li>
+          <li><a href="trips.html">TRIPS</a></li>
+          <li><a href="books.html" aria-current="page">BOOKS</a></li>
+        </ol>
+      </nav>
+    </aside>
+
+    <div class="content">
+
+<header>
+	<h1>Books</h1>
+</header>
+
+<div class="abstract">
+  <p>Wanted to catalog all the books I've read in recent years. Or at least the ones I can remember..
+  </p>
+</div>
+
+<main>
+<article>
+
+<!-- Favorites - header + intro text live here as normal HTML (edit freely);
+     the JS appends the covers grid + "All" header after them at load.
+     Whole div is hidden automatically if no book has fav: true. -->
+<div id="favorites">
+  <h2>Favorites</h2>
+  <p>These are some of my all time favorites. But my recency bias is pretty bad, so take this with a grain of salt.</p>
+  <br>
+</div>
+
+<!-- Files-app style toolbar: view toggle + sort controls.
+     Only affects the All section below it. -->
+<div class="book-toolbar" role="toolbar" aria-label="Bookshelf controls">
+  <span class="tb-group" role="group" aria-label="View">
+    <button type="button" class="tb-btn view-btn active" data-view="covers">Covers</button>
+    <button type="button" class="tb-btn view-btn" data-view="list">List</button>
+  </span>
+  <span class="tb-group" role="group" aria-label="Sort">
+    <span class="tb-label">Sort by</span>
+    <button type="button" class="tb-btn sort-btn active" data-key="read">Recent <span class="tb-arrow">&#9660;</span></button>
+    <button type="button" class="tb-btn sort-btn" data-key="title">Title <span class="tb-arrow"></span></button>
+    <button type="button" class="tb-btn sort-btn" data-key="author">Author <span class="tb-arrow"></span></button>
+  </span>
+</div>
+
+<!-- The shelf itself - rendered by JS from assets/books.js -->
+<div id="shelf"></div>
+
+</article>
+</main>
+
+</div>
+
+<a href="#" class="back-to-top" aria-label="Back to top">&uarr;</a>
+
+<!-- Lightbox: same as other pages plus a caption bar for book details -->
+<div class="lightbox-overlay" onclick="closeLightbox()">
+  <button class="lightbox-close" aria-label="Close">&times;</button>
+  <button class="lightbox-prev" aria-label="Previous" onclick="event.stopPropagation();lightboxNav(-1)">&lsaquo;</button>
+  <img src="" alt="" onclick="event.stopPropagation()">
+  <div class="lightbox-caption" onclick="event.stopPropagation()"></div>
+  <button class="lightbox-next" aria-label="Next" onclick="event.stopPropagation();lightboxNav(1)">&rsaquo;</button>
+</div>
+
+<script src="assets/books.js"></script>
+<script>
+// Back to top + progress bar (shared across pages - keep in sync)
+(function() {
+  var btn = document.querySelector('.back-to-top');
+  var bar = document.querySelector('.progress-bar');
+  window.addEventListener('scroll', function() {
+    btn.classList.toggle('visible', window.scrollY > 400);
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = h > 0 ? (window.scrollY / h * 100) + '%' : '0%';
+  });
+})();
+
+// ==================================================================
+// Bookshelf: sorting, view toggle, rendering
+// ==================================================================
+
+// View/sort state, remembered between visits via localStorage.
+// A #covers or #list hash in the URL overrides the remembered view.
+var shelfState = {
+  view: localStorage.getItem('booksView') || 'covers',
+  key:  localStorage.getItem('booksKey')  || 'read',
+  dir:  parseInt(localStorage.getItem('booksDir') || '-1', 10)
+};
+if (location.hash === '#list' || location.hash === '#covers') {
+  shelfState.view = location.hash.slice(1);
+}
+
+// Sort keys. Title ignores a leading "The/A/An" (bibliographic style);
+// author uses the last word of the name. Both can be overridden per
+// book in books.js with sortTitle / sortAuthor.
+function titleKey(b) {
+  return (b.sortTitle || b.title.replace(/^(The|A|An)\s+/i, '')).toLowerCase();
+}
+function authorKey(b) {
+  if (b.sortAuthor) return b.sortAuthor.toLowerCase();
+  var parts = b.author.split(/\s+/);
+  return parts[parts.length - 1].toLowerCase();
+}
+function sortedBooks() {
+  var key = shelfState.key, dir = shelfState.dir;
+  var get = key === 'title' ? titleKey
+          : key === 'author' ? authorKey
+          : function (b) { return b.read; };
+  // slice() so the original BOOKS order is never mutated
+  return BOOKS.slice().sort(function (a, b) {
+    var ka = get(a), kb = get(b);
+    return ka < kb ? -dir : ka > kb ? dir : 0;
+  });
+}
+
+function coverSrc(b) { return 'images/books/' + b.slug + '.jpg'; }
+function bookLabel(b) {
+  return b.title + ' — ' + b.author + (b.format === 'audio' ? ' (audiobook)' : '');
+}
+
+var shelf = document.getElementById('shelf');
+
+// Cover grid for a list of books. withMeta adds title/author/format
+// text under each cover (used by the Favorites section).
+function buildGrid(books, withMeta) {
+  var grid = document.createElement('div');
+  grid.className = 'book-grid';
+  books.forEach(function (b, i) {
+    var fig = document.createElement('figure');
+    fig.className = 'book';
+    var img = document.createElement('img');
+    img.src = coverSrc(b);
+    img.alt = bookLabel(b);
+    img.title = bookLabel(b); // hover tooltip
+    img.loading = 'lazy';
+    img.addEventListener('click', function () { openBookLightbox(books, i); });
+    fig.appendChild(img);
+    if (withMeta) {
+      // div, not figcaption - figcaption would get LaTeX.css figure numbering
+      var meta = document.createElement('div');
+      meta.className = 'book-meta';
+      meta.innerHTML = '<i>' + b.title + '</i><br>' + b.author +
+        (b.format === 'audio' ? '<br><span class="book-format">audiobook</span>' : '');
+      fig.appendChild(meta);
+    }
+    grid.appendChild(fig);
+  });
+  return grid;
+}
+
+function buildTable(books) {
+  var wrap = document.createElement('div');
+  wrap.className = 'table-scroll-wrap';
+  var table = document.createElement('table');
+  table.className = 'book-list';
+  table.innerHTML = '<thead><tr><th>Title</th><th>Author</th><th>Format</th></tr></thead>';
+  var tbody = document.createElement('tbody');
+  books.forEach(function (b, i) {
+    var tr = document.createElement('tr');
+    var tdT = document.createElement('td');
+    tdT.textContent = b.title;
+    var tdA = document.createElement('td');
+    tdA.textContent = b.author;
+    var tdF = document.createElement('td');
+    tdF.innerHTML = b.format === 'audio' ? '<i>audio</i>' : '';
+    tr.appendChild(tdT); tr.appendChild(tdA); tr.appendChild(tdF);
+    // rows open the lightbox too, same as clicking a cover
+    tr.addEventListener('click', function () { openBookLightbox(books, i); });
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+  wrap.appendChild(table);
+  return wrap;
+}
+
+function sectionHeader(text) {
+  var h = document.createElement('h2');
+  h.textContent = text;
+  return h;
+}
+
+// Favorites: books with fav: true. Fixed design - covers with text
+// underneath, alphabetical by title, unaffected by the toolbar.
+// The header + any intro text are static HTML inside #favorites;
+// this only appends the grid and the "All" header after them.
+(function renderFavorites() {
+  var favs = BOOKS.filter(function (b) { return b.fav; }).sort(function (a, b) {
+    return titleKey(a) < titleKey(b) ? -1 : 1;
+  });
+  var el = document.getElementById('favorites');
+  if (!favs.length) {
+    el.style.display = 'none'; // hides the static header/text too
+    return;
+  }
+  el.appendChild(buildGrid(favs, true));
+  el.appendChild(sectionHeader('All'));
+})();
+
+// The full shelf (favorites repeat here) - obeys toolbar view + sort
+function render() {
+  var books = sortedBooks();
+  shelf.innerHTML = '';
+  shelf.appendChild(shelfState.view === 'covers' ? buildGrid(books, false) : buildTable(books));
+  updateToolbar();
+}
+
+function updateToolbar() {
+  document.querySelectorAll('.view-btn').forEach(function (btn) {
+    btn.classList.toggle('active', btn.dataset.view === shelfState.view);
+  });
+  document.querySelectorAll('.sort-btn').forEach(function (btn) {
+    var active = btn.dataset.key === shelfState.key;
+    btn.classList.toggle('active', active);
+    // ▲ ascending, ▼ descending, blank on inactive buttons
+    btn.querySelector('.tb-arrow').innerHTML =
+      active ? (shelfState.dir === 1 ? '&#9650;' : '&#9660;') : '';
+  });
+}
+
+function saveState() {
+  localStorage.setItem('booksView', shelfState.view);
+  localStorage.setItem('booksKey', shelfState.key);
+  localStorage.setItem('booksDir', String(shelfState.dir));
+}
+
+document.querySelectorAll('.view-btn').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    shelfState.view = btn.dataset.view;
+    saveState();
+    render();
+  });
+});
+document.querySelectorAll('.sort-btn').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    if (shelfState.key === btn.dataset.key) {
+      shelfState.dir = -shelfState.dir; // same button again = flip direction
+    } else {
+      shelfState.key = btn.dataset.key;
+      // sensible default per key: newest first for Recent, A-Z otherwise
+      shelfState.dir = btn.dataset.key === 'read' ? -1 : 1;
+    }
+    saveState();
+    render();
+  });
+});
+
+render();
+
+// ==================================================================
+// Lightbox (book version: adds a caption line under the cover)
+// ==================================================================
+var lbImages = [];
+var lbIndex = 0;
+var lbOverlay = document.querySelector('.lightbox-overlay');
+var lbImg = lbOverlay.querySelector('img');
+var lbCap = lbOverlay.querySelector('.lightbox-caption');
+var lbPrev = lbOverlay.querySelector('.lightbox-prev');
+var lbNext = lbOverlay.querySelector('.lightbox-next');
+function showLbImage() {
+  var item = lbImages[lbIndex];
+  lbImg.src = item.src;
+  lbImg.alt = item.alt;
+  lbCap.textContent = item.cap;
+  lbPrev.classList.toggle('hidden', lbIndex === 0);
+  lbNext.classList.toggle('hidden', lbIndex === lbImages.length - 1);
+}
+// Books enter the lightbox in current shelf order, so prev/next
+// walk the shelf exactly as sorted on screen
+function openBookLightbox(books, index) {
+  lbImages = books.map(function (b) {
+    return { src: coverSrc(b), alt: bookLabel(b), cap: bookLabel(b) };
+  });
+  lbIndex = index;
+  showLbImage();
+  lbOverlay.classList.add('active');
+}
+function closeLightbox() {
+  lbOverlay.classList.remove('active');
+  lbImages = [];
+}
+function lightboxNav(dir) {
+  var next = lbIndex + dir;
+  if (next >= 0 && next < lbImages.length) {
+    lbIndex = next;
+    showLbImage();
+  }
+}
+document.addEventListener('keydown', function(e) {
+  if (!lbOverlay.classList.contains('active')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') lightboxNav(-1);
+  if (e.key === 'ArrowRight') lightboxNav(1);
+});
+</script>
+
+</body>
+</html>

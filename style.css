@@ -1612,3 +1612,145 @@ article table {
     break-after: avoid;
   }
 }
+/* ---------- Globe (index.html Travel section) ---------- */
+#globe {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+#globe canvas {
+  display: block;
+  cursor: grab;
+  touch-action: pan-y; /* horizontal drag rotates, vertical swipe still scrolls */
+}
+#globe canvas:active {
+  cursor: grabbing;
+}
+
+@media print {
+  #globe {
+    display: none;
+  }
+}
+
+/* ============================================================
+   BOOKSHELF (books.html)
+   Files-app style toolbar + cover grid / list views
+   ============================================================ */
+.book-toolbar {
+  display: flex;
+  flex-wrap: wrap;            /* stacks on narrow screens */
+  gap: 0.5rem 2rem;
+  align-items: center;
+  margin: 1.5rem 0 2rem;
+}
+.tb-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.tb-label {
+  font-variant: small-caps;
+  letter-spacing: 0.03em;
+}
+.tb-btn {
+  font-family: inherit;
+  font-size: 0.85rem;
+  background: none;
+  color: inherit;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  padding: 0.15rem 0.7rem;
+  cursor: pointer;
+}
+.tb-btn.active {
+  background: #333;
+  color: #fdfdfd;
+  border-color: #333;
+}
+/* Inverted variant only if the site ever enables LaTeX.css dark mode
+   (body class latex-dark, or latex-dark-auto + OS dark preference) */
+.latex-dark .tb-btn.active {
+  background: #ddd;
+  color: #111;
+  border-color: #ddd;
+}
+@media (prefers-color-scheme: dark) {
+  .latex-dark-auto .tb-btn.active {
+    background: #ddd;
+    color: #111;
+    border-color: #ddd;
+  }
+}
+/* Fixed-width arrow slot so buttons don't jump when ▲/▼ appears */
+.tb-arrow {
+  display: inline-block;
+  width: 0.9em;
+  font-size: 0.7em;
+}
+
+/* Cover grid - plain grid, no shelf furniture */
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1.75rem 1.25rem;
+  align-items: end;           /* covers of differing heights sit on a common baseline */
+}
+.book-grid figure.book {
+  margin: 0;                  /* kill LaTeX.css default figure margins */
+}
+.book-grid img {
+  width: 100%;
+  display: block;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.book-grid img:hover {
+  transform: translateY(-4px);
+}
+
+/* Title/author/format text under covers in the Favorites section */
+.book-meta {
+  font-size: 0.8rem;
+  line-height: 1.35;
+  text-align: center;
+  margin-top: 0.45rem;
+}
+.book-format {
+  font-variant: small-caps;
+  letter-spacing: 0.03em;
+  opacity: 0.75;
+}
+
+/* List view rows are clickable */
+.book-list tbody tr {
+  cursor: pointer;
+}
+
+/* Caption bar inside the lightbox (books page only) */
+.lightbox-caption {
+  position: fixed;
+  bottom: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 201;
+  max-width: 90vw;
+  padding: 0.3rem 0.9rem;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.65);
+  border-radius: 2px;
+  font-size: 0.95rem;
+  text-align: center;
+  cursor: default;
+}
+.lightbox-caption:empty {
+  display: none;
+}
+
+@media print {
+  .book-toolbar {
+    display: none;            /* print just shows the shelf as-is */
+  }
+}
