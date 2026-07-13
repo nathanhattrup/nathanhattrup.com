@@ -62,6 +62,17 @@ python3 compress_images.py --dry-run        # preview without changes
 - **Responsive video embeds** — YouTube iframes wrapped in `<div class="video-wrap">` for 16:9 aspect-ratio scaling.
 - **Table scroll wrapping** — JS auto-wraps `article table:not(.gantt)` in `.table-scroll-wrap` for mobile horizontal scroll.
 
+## Vault Sync
+
+When asked to "update my vault with current website content" (or similar), export page prose to Nat's Obsidian vault as markdown. Read `/mnt/windows/Users/nahat/Documents/VAULT/CLAUDE.md` first (vault rules; external-project writes go to `VAULT/claude/`).
+
+- **Targets:** `index.html` → `Home.md`, `courses.html` → `Courses.md`, `projects.html` → `Projects.md`, `trips.html` → `Trips.md`. Skip `books.html` and any page with placeholder/empty content (e.g. `experience.html` while WIP). If a skipped page has gained real content, export it too (capitalized filename matching page title).
+- **Overwrite** the existing files in `VAULT/claude/` — full re-export, not a diff. If Nat has promoted a note out of `claude/` (check `fd -e md <name>` in vault), update it in place instead of recreating in `claude/`.
+- **Capture:** written text, headings, and tables only. Convert HTML tables to markdown tables; summarize the courses gantt chart as a small text table. Keep footnotes.
+- **Images/videos:** don't copy. Note them in `> [!note]` callouts — galleries as one callout summarizing captions with the folder path (e.g. `images/japan/`), standalone images with caption + path, YouTube embeds as plain links.
+- **Links:** cross-page site links become `[[wikilinks]]` (e.g. `[[Trips]]`); external links stay markdown links.
+- **Style:** each note starts with `# Title` and an *"Imported from nathanhattrup.com <file>"* line. Fix obvious typos in transcribed prose; never edit the HTML. Omit site chrome (sidebar nav, TOC dotfill, lightbox/JS).
+
 ## Conventions
 
 - Semantic HTML5 elements throughout (`<article>`, `<figure>`, `<figcaption>`, `<aside>`)
