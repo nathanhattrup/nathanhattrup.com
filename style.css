@@ -969,6 +969,25 @@ body.has-sidebar .sidebar a[aria-current="page"] {
   text-underline-offset: 2px;
 }
 
+/* Dark/light mode toggle — styled like a sidebar link */
+body.has-sidebar .sidebar .theme-toggle {
+  display: block;
+  margin: 1.25rem 0 0 2rem;  /* left margin lines up with list text */
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--body-color);
+  cursor: pointer;
+}
+
+body.has-sidebar .sidebar .theme-toggle:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 /* ============================================================
    SIDEBAR — narrow-screen collapse to horizontal top bar
    ============================================================ */
@@ -1017,6 +1036,11 @@ body.has-sidebar .sidebar a[aria-current="page"] {
   body.has-sidebar .sidebar li {
     margin: 0;
     padding: 0;
+  }
+
+  /* Center the theme toggle under the horizontal nav row */
+  body.has-sidebar .sidebar .theme-toggle {
+    margin: 0.75rem auto 0;
   }
 }
 

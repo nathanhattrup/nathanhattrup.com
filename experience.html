@@ -10,6 +10,7 @@
 </head>
 
 <body class="text-justify has-sidebar">
+<script>if (localStorage.getItem('theme') === 'dark') document.body.classList.add('latex-dark');</script>
 <div class="progress-bar"></div>
     <aside class="sidebar" aria-label="Site navigation">
       <nav>
@@ -22,6 +23,7 @@
 		      <li><a href="trips.html">TRIPS</a></li>
 		      <li><a href="books.html">BOOKS</a></li>
         </ol>
+        <button class="theme-toggle" type="button" aria-pressed="false">Dark Mode</button>
       </nav>
     </aside>
 
@@ -58,6 +60,31 @@
 </div>
 
 <script>
+// Clean URLs: GitHub Pages serves /trips for trips.html, so hide the
+// extension in the address bar (skipped when browsing via file://)
+if (location.protocol !== 'file:' && /\.html$/.test(location.pathname)) {
+  history.replaceState(null, '', location.pathname.replace(/\.html$/, '').replace(/\/index$/, '/') + location.search + location.hash);
+}
+
+// Dark mode toggle (shared across pages - keep in sync)
+(function() {
+  var btn = document.querySelector('.theme-toggle');
+  if (!btn) return;
+  function syncLabel() {
+    var dark = document.body.classList.contains('latex-dark');
+    btn.textContent = dark ? 'Light Mode' : 'Dark Mode';
+    btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
+  }
+  btn.addEventListener('click', function() {
+    document.body.classList.toggle('latex-dark');
+    localStorage.setItem('theme', document.body.classList.contains('latex-dark') ? 'dark' : 'light');
+    // Nudge canvas redraws (travel globe) so line color follows the new theme
+    window.dispatchEvent(new Event('resize'));
+    syncLabel();
+  });
+  syncLabel();
+})();
+
 (function() {
   var btn = document.querySelector('.back-to-top');
   var bar = document.querySelector('.progress-bar');
