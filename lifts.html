@@ -3,13 +3,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nathan Hattrup</title>
+    <title>Lifts &ndash; Nathan Hattrup</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="prism/prism.css" />
+  
   <link rel="icon" href="images/favicon/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="images/favicon/favicon-32.png" type="image/png" sizes="32x32">
   <link rel="apple-touch-icon" href="images/favicon/apple-touch-icon.png">
-  <link rel="canonical" href="https://www.nathanhattrup.com/" />
+  <link rel="canonical" href="https://www.nathanhattrup.com/lifts" />
 </head>
 
 <body class="text-justify has-sidebar">
@@ -19,11 +20,12 @@
       <nav>
         <h2>Contents</h2>
         <ol>
-          <li><a href="index.html" aria-current="page">HOME</a></li>
-          <li><a href="projects.html">PROJECTS</a></li>
+          <li><a href="index.html">HOME</a></li>
+          <li><a href="projects.html">PROJECTS</a></li>          
           <li><a href="courses.html">COURSES</a></li>
-          <li><a href="trips.html">TRIPS</a></li>
-          <li><a href="books.html">BOOKS</a></li>
+		  <li><a href="trips.html">TRIPS</a></li>
+		  <li><a href="books.html">BOOKS</a></li>
+          <li><a href="lifts.html" aria-current="page">LIFTS</a></li>
         </ol>
         <button class="theme-toggle" type="button" aria-pressed="false">Dark Mode</button>
       </nav>
@@ -32,70 +34,126 @@
     <div class="content">
 
 <header>
-	<h1>Nathan Hattrup</h1>
-	<p class="author">
-      Last Updated <br/>
-      July 5<sup>th</sup>, 2026
-    </p>
+	<h1>Lifts</h1>
 </header>
 
 <div class="abstract">
-  <p> <i>BS Electrical Engineering</i> (awarded)<br>
-    <i>MS Electrical Engineering</i> (in progress)<br>
-    <i>MS Nuclear Engineering</i> (in progress)<br>
-    North Carolina State University<br>
-    <a href="#" onclick="navigator.clipboard.writeText('nathanhattrup@gmail.com'); this.textContent='Copied!'; setTimeout(() => this.textContent='nathanhattrup[at]gmail[dot]com', 1000); return false;">
-  nathanhattrup[at]gmail[dot]com</a>
+  <p>I spend most of my free time powerlifting, so I thought it deserved its own page. Check out my <a href="https://www.instagram.com/nathan_trains_neck/" target="_blank">instagram</a> for more!
   </p>
 </div>
 
 <main>
 <article>
 
-<figure>
-	<img src="images/me_and_blair.JPEG" alt="Blair and I"/>
+ <figure>
+	<img src="images/deadlift.JPG" 
+	loading = "lazy" alt="deadlift flick"/>
 	<figcaption>
-	My girlfriend Blair and I.
+	Mock meet at Spider Strength. Photo by <a href="https://www.instagram.com/ikenstein/" target="_blank">Ike Smith</a>.
 	</figcaption>
 </figure>
 
-<h2>Bio</h2>
-<p>Originally from Overland Park, Kansas, I moved to Raleigh, North Carolina to attend North Carolina State University. 
-  I graduated magna cum laude with a BS in Electrical Engineering in the Spring of 2026. I am now pursuing a masters in both electrical 
-  and nuclear engineering.
-<br><br>
+<h2>Maxes & Meet Results</h2>
+These are the results from the various meets<sup><a href="#fn1">1</a></sup> I've competed in so far. 
+<div class="scroll-wrapper">
+<table>
+  <caption>All time bests.</caption>
+  <!-- Header row in <thead> so LaTeX.css draws the mid-rule -->
+  <thead>
+    <tr>
+      <th scope="col">Event&nbsp;&nbsp;&nbsp;&nbsp;</th>
+      <th scope="col">Meet&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+      <th scope="col">Gym</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Squat</th>
+      <td>524 lbs / 237.5 kg</td>
+      <td>529 lbs / 240 kg</td>
+    </tr>
+    <tr>
+      <th>Bench</th>
+      <td>314 lbs / 142.5 kg</td>
+      <td>330 lbs / 150 kg</td>
+    </tr>
+    <tr class="border-bottom-thin">
+      <th>Deadlift</th>
+      <td>551 lbs / 250 kg</td>
+      <td>551 lbs / 250 kg</td>
+    </tr>
+    <tr>
+      <th>Total</th>
+      <td>1372 lbs / 622.5 kg</td>
+      <td>&mdash;</td>
+    </tr>
+    <tr>
+      <th>DOTS</th>
+      <td>423.6</td>
+      <td>&mdash;</td>
+    </tr>
+  </tbody>
+</table>
+</div>
 
-My passions lie in the energy industry as a whole&mdash;not only the technologies that power it, but also the economics and policies that shape it.
- It is here that I wish to further cultivate my career, attempting to push the envelope of innovation both personally and professionally.<br><br>
+<div class="scroll-wrapper">
+<table class="liftresults">
+  <caption>Meet results in kg.</caption>
+  <thead>
+    <tr>
+      <th scope="col">Meet</th>
+      <th scope="col">BW</th>
+      <th scope="col">Squat</th>
+      <th scope="col">Bench</th>
+      <th scope="col">Deadlift</th>
+      <th scope="col">Total</th>
+      <th scope="col">DOTS</th>
+    </tr>
+  </thead>
+  <tbody id="meet-results-body"></tbody>
+</table>
+</div>
 
-During my time in electrical engineering, I have also fallen in love with embedded systems and computer engineering as a whole. It has been deeply rewarding to grow in these
-	areas through elective courses, projects, and outside learnings. <br><br>
-	
-Outside of academics, I enjoy competing in powerlifting, exploring the outdoors, and spending time with friends.
+<h2>Progress</h2>
+<p>As corny as it sounds, I think one of the best skills I've had to learn&mdash;and I learned it the hard way&mdash;is how to manage external stress from work and life.
+Staying consistent through grueling semesters and shifting priorities has been a challenge, but it's one that I truly am thankful for. As much as I hate looking back at
+stagnant progress and plateaus, I do feel like I've come out on top and am better prepared for the future.
+</p>
 
-<h2>Travel</h2>
 <figure>
-  <div id="globe" aria-label="Spinning globe marking places I have visited"></div>
-  <figcaption>Where I've been around the world!</figcaption>
-  <p>If you want to see more of the highlights, check out my <a href="trips.html">Trips</a> page!</p>
+  <div class="liftchart" data-metric="squat" data-event-labels></div>
+  <figcaption>Squat.</figcaption>
 </figure>
 
-<h2>Currently</h2>
-<ul>
-  <li>Interning with Burns & McDonnell</li>
-  <li>Continuing work on our senior design project through the support of the Andrews Launch Accelerator</li>
-</ul>
+<figure>
+  <div class="liftchart" data-metric="bench"></div>
+  <figcaption>Bench.</figcaption>
+</figure>
+
+<figure>
+  <div class="liftchart" data-metric="deadlift"></div>
+  <figcaption>Deadlift.</figcaption>
+</figure>
+
+<figure>
+  <div class="liftchart" data-metric="total"></div>
+  <figcaption>Total.</figcaption>
+</figure>
+
+<figure>
+  <div class="liftchart" data-metric="dots"></div>
+  <figcaption>DOTS.</figcaption>
+</figure>
 
 
 <div class="footnotes">
-<p>The library 
-<a href="https://github.com/vincentdoerig/latex-css" target="_blank"><span class="latex">L<span>a</span>T<span>e</span>X</span>.css</a> 
-was used extensively for this project. </p>
+<p id="fn1">1. You can find my meet numbers on my
+<a href="https://www.openpowerlifting.org/u/nathanhattrup" target="_blank">
+OpenPowerlifting</a> page.</p>
 </div>
 
 </article>
 </main>
-
 </div>
 
 <a href="#" class="back-to-top" aria-label="Back to top">&uarr;</a>
@@ -108,12 +166,8 @@ was used extensively for this project. </p>
 </div>
 
 <script src="assets/d3.v7.min.js"></script>
-<script src="assets/topojson-client.min.js"></script>
-<script src="assets/land-110m.js"></script>
-<script src="assets/countries-110m.js"></script>
-<script src="assets/us-states-110m.js"></script>
-<script src="assets/locations.js"></script>
-<script src="assets/globe.js"></script>
+<script src="assets/lifting-data.js"></script>
+<script src="assets/lifting.js"></script>
 
 <script>
 // Clean URLs: GitHub Pages serves /trips for trips.html, so hide the
@@ -134,7 +188,7 @@ if (location.protocol !== 'file:' && /\.html$/.test(location.pathname)) {
   btn.addEventListener('click', function() {
     document.body.classList.toggle('latex-dark');
     localStorage.setItem('theme', document.body.classList.contains('latex-dark') ? 'dark' : 'light');
-    // Nudge canvas redraws (travel globe) so line color follows the new theme
+    // Nudge canvas/SVG redraws (globe, lifting charts) so colors follow the new theme
     window.dispatchEvent(new Event('resize'));
     syncLabel();
   });

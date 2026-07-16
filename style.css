@@ -145,6 +145,15 @@
   1pt[LaTeX] = (72 / 72.27) * 1pt[HTML], with default 12pt/1rem LaTeX.css font
   size, the identation value in rem CSS units is:
   \parindent =~ 17.625 * (72 / 72.27) / 12 = 1.463rem. */
+  /* Lifting chart series colors (lifting.html; per-mode variants below,
+     validated for lightness/chroma/contrast against each surface) */
+  --chart-squat: #be8c00;
+  --chart-bench: #6f7d00;
+  --chart-deadlift: #b93332;
+  --chart-total: #1f5aa6;
+  --chart-dots: #1f5aa6;
+  --chart-grid: hsl(210, 12%, 89%);          /* hairline gridlines, one step off surface */
+  --chart-muted: hsl(0, 0%, 40%);            /* axis text, event markers */
 }
 
 /* Manual dark-mode override: add class="latex-dark" to <body> */
@@ -160,6 +169,13 @@
   --sidenote-target-border-color: hsl(0, 0%, 59%);
   --footnotes-border-color: hsl(0, 0%, 59%);
   --proof-symbol-filter: invert(80%); /* invert the proof end-of-proof glyph for dark bg */
+  --chart-squat: #c18500;
+  --chart-bench: #8a9a00;
+  --chart-deadlift: #cf4e48;
+  --chart-total: #3d7cc9;
+  --chart-dots: #3d7cc9;
+  --chart-grid: hsl(0, 0%, 24%);
+  --chart-muted: hsl(0, 0%, 62%);
 }
 
 /* Auto dark-mode: triggers when OS prefers dark AND class="latex-dark-auto" is set */
@@ -176,6 +192,13 @@
     --sidenote-target-border-color: hsl(0, 0%, 59%);
     --footnotes-border-color: hsl(0, 0%, 59%);
     --proof-symbol-filter: invert(80%);
+    --chart-squat: #c18500;
+    --chart-bench: #8a9a00;
+    --chart-deadlift: #cf4e48;
+    --chart-total: #3d7cc9;
+    --chart-dots: #3d7cc9;
+    --chart-grid: hsl(0, 0%, 24%);
+    --chart-muted: hsl(0, 0%, 62%);
   }
 }
 
@@ -235,7 +258,7 @@ body {
      Adding `figcaption` here keeps the figure number page-wide even when
      figures sit inside .gallery wrapper divs (which otherwise create a new
      counter scope in Chromium and reset numbering each gallery). */
-  counter-reset: theorem definition sidenote-counter figcaption;
+  counter-reset: theorem definition sidenote-counter figcaption caption;
 
   color: var(--body-color);
   background-color: var(--body-bg-color);
@@ -1655,6 +1678,108 @@ article table {
   #globe {
     display: none;
   }
+}
+
+/* ---------- Lifting charts (lifting.html) ---------- */
+.liftchart {
+  width: 100%;
+  margin: 0 auto;
+}
+.liftchart svg {
+  display: block;
+  overflow: visible; /* endpoint label / event text may poke past the top */
+}
+.liftchart svg:focus {
+  outline: 2px solid var(--link-focus-outline);
+  outline-offset: 2px;
+}
+.liftchart .chart-grid {
+  stroke: var(--chart-grid);
+  stroke-width: 1;
+}
+.liftchart .chart-axis text {
+  font-family: inherit;
+  font-size: 0.72rem;
+  fill: var(--chart-muted);
+  font-variant-numeric: tabular-nums;
+}
+.liftchart .chart-axis-title {
+  font-size: 0.72rem;
+  fill: var(--chart-muted);
+  font-style: italic;
+}
+.liftchart .chart-line {
+  fill: none;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.liftchart .chart-end-label {
+  font-size: 0.78rem;
+  fill: var(--body-color); /* text wears ink, not the series color */
+  paint-order: stroke;     /* surface halo knocks out the event line behind the text */
+  stroke: var(--body-bg-color);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+.liftchart .chart-event {
+  stroke: var(--chart-muted);
+  stroke-width: 1;
+  stroke-dasharray: 4 3; /* dashed = annotation, distinct from solid grid */
+}
+.liftchart .chart-event-label {
+  font-size: 0.72rem;
+  font-style: italic;
+  fill: var(--chart-muted);
+}
+.liftchart .chart-crosshair {
+  stroke: var(--chart-muted);
+  stroke-width: 1;
+  pointer-events: none;
+}
+.chart-tip {
+  position: absolute;
+  z-index: 30;
+  max-width: 16rem;
+  padding: 0.35rem 0.6rem;
+  background: var(--body-bg-color);
+  border: 1px solid var(--chart-muted);
+  border-left: 3px solid var(--chart-muted); /* series color set inline by JS */
+  font-size: 0.8rem;
+  line-height: 1.35;
+  pointer-events: none;
+}
+.chart-tip strong {
+  display: block; /* the value leads; meet + date follow smaller */
+}
+.chart-tip span {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--chart-muted);
+}
+@media print {
+  .chart-tip {
+    display: none;
+  }
+}
+table.liftresults {
+  width: 100%; /* let the long meet names wrap instead of overflowing */
+}
+.scroll-wrapper > table.liftresults td:first-of-type {
+  white-space: normal; /* meet names may wrap; numeric columns keep nowrap */
+}
+table.liftresults tbody th {
+  white-space: normal; /* meet name + date may wrap */
+  font-weight: normal;
+}
+table.liftresults th,
+table.liftresults td {
+  font-size: 0.9em; /* attempt breakdown is wide — shrink to fit the column */
+  padding: 0.5rem 0.25rem;
+}
+table.liftresults .att-miss {
+  text-decoration: line-through;
+  color: var(--chart-muted);
 }
 
 /* ============================================================
