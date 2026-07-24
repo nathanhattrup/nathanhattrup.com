@@ -16,8 +16,7 @@
   // ------------------------------------------------------------------
   var LBS_PER_KG  = 2.20462;
   var EVENTS = [ // dashed vertical markers; labels drawn only on the chart with data-event-labels
-    { date: '2024-11-02', label: 'SI joint injury' },
-    { date: '2026-07-12', label: 'Bench Day Lifts Begins' }
+    { date: '2024-11-02', label: 'SI joint injury' }
   ];
   var CHART_HEIGHT = 260;   // plot height in px (px, not counting axis band)
   var DOT_R        = 4.5;   // data point radius
