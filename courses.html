@@ -16,7 +16,8 @@
 <script>if (localStorage.getItem('theme') === 'dark') document.body.classList.add('latex-dark');</script>
 <div class="progress-bar"></div>
     <aside class="sidebar" aria-label="Site navigation">
-      <nav>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+      <nav id="site-nav">
         <h2>Contents</h2>
         <ol>
           <li><a href="index.html">HOME</a></li>
@@ -24,6 +25,7 @@
           <li><a href="courses.html" aria-current="page">COURSES</a></li>
 		      <li><a href="trips.html">TRIPS</a></li>
 		      <li><a href="books.html">BOOKS</a></li>
+          <li><a href="lifts.html">LIFTS</a></li>
         </ol>
         <button class="theme-toggle" type="button" aria-pressed="false">Dark Mode</button>
       </nav>
@@ -463,6 +465,26 @@ if (location.protocol !== 'file:' && /\.html$/.test(location.pathname)) {
     syncLabel();
   });
   syncLabel();
+})();
+
+// Mobile nav dropdown (shared across pages - keep in sync)
+(function() {
+  var btn = document.querySelector('.nav-toggle');
+  var sidebar = document.querySelector('.sidebar');
+  if (!btn || !sidebar) return;
+  function setOpen(open) {
+    sidebar.classList.toggle('nav-open', open);
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  btn.addEventListener('click', function() {
+    setOpen(!sidebar.classList.contains('nav-open'));
+  });
+  document.addEventListener('click', function(e) {
+    if (!sidebar.contains(e.target)) setOpen(false);
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') setOpen(false);
+  });
 })();
 
 (function() {

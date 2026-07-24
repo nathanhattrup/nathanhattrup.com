@@ -921,6 +921,9 @@ h6 {
   /* Sidebar size knobs */
   --sidebar-width: 14rem;
   --sidebar-left-pad: 1.25rem; /* set to 0 for true flush-left */
+
+  /* Height of the slim fixed nav band on mobile (<= 1025px) */
+  --mobile-nav-h: 2.5rem;
 }
 
 /* IMPORTANT:
@@ -1011,48 +1014,86 @@ body.has-sidebar .sidebar .theme-toggle:hover {
   text-underline-offset: 2px;
 }
 
+/* Mobile nav toggle button — hidden on desktop */
+.nav-toggle {
+  display: none;
+}
+
 /* ============================================================
-   SIDEBAR — narrow-screen collapse to horizontal top bar
+   SIDEBAR — narrow-screen collapse to a slim fixed top band
+   with a tap-to-open dropdown menu
    ============================================================ */
 @media (max-width: 1025px) {
+  /* Slim band pinned to the top of the viewport */
   body.has-sidebar .sidebar {
-    position: static;          /* stays at top of page, does not follow scroll */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
 
     width: auto;
-    max-height: none;
-    overflow: visible;
+    max-height: 100vh;
+    overflow: auto;            /* dropdown scrolls on short screens */
 
     background-color: var(--body-bg-color);
-    z-index: 10;
+    z-index: 100;
 
     border-right: none;
     border-bottom: var(--border-width-thin) solid var(--table-border-color);
 
-    padding: 0.75rem 0;
-    margin: 0 0 1rem 0;
+    padding: 0;
+    margin: 0;
   }
 
-  /* Hide "Contents" label on the compact bar */
+  /* The band itself: one full-width MENU button */
+  body.has-sidebar .sidebar .nav-toggle {
+    display: block;
+    width: 100%;
+    height: var(--mobile-nav-h);
+    padding: 0;
+    border: none;
+    background: none;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--body-color);
+    cursor: pointer;
+  }
+
+  body.has-sidebar .sidebar .nav-toggle::after {
+    content: " \25BE";         /* ▾ */
+  }
+  body.has-sidebar .sidebar.nav-open .nav-toggle::after {
+    content: " \25B4";         /* ▴ */
+  }
+
+  /* Dropdown panel — hidden until the band is tapped */
+  body.has-sidebar .sidebar nav {
+    display: none;
+  }
+  body.has-sidebar .sidebar.nav-open nav {
+    display: block;
+    padding: 0 0 1rem;
+  }
+
+  /* Hide "Contents" label in the dropdown */
   body.has-sidebar .sidebar h2 {
     display: none;
   }
 
-  /* Lay items out horizontally and drop numbering */
-  body.has-sidebar .sidebar ol {
-    justify-content: center;
-	margin: 0;
+  /* Vertical centered link list, numbering dropped */
+  body.has-sidebar .sidebar nav ol {
+    margin: 0;
     padding: 0;
     font-size: 0.9rem;
-
     list-style: none;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    align-items: baseline;
+    text-align: center;
   }
 
-  /* Kill any pseudo-element numbers we added earlier */
-  body.has-sidebar .sidebar li::before {
+  /* Kill the styled ::before counter (higher specificity than the
+     counter rule further down, which comes later in the file) */
+  body.has-sidebar .sidebar nav ol > li::before {
     content: none;
   }
 
@@ -1061,9 +1102,27 @@ body.has-sidebar .sidebar .theme-toggle:hover {
     padding: 0;
   }
 
-  /* Center the theme toggle under the horizontal nav row */
+  body.has-sidebar .sidebar li + li {
+    margin-top: 0.6rem;
+  }
+
+  /* Bigger tap targets without changing the look */
+  body.has-sidebar .sidebar li a {
+    display: inline-block;
+    padding: 0.1rem 0.75rem;
+  }
+
+  /* Center the theme toggle at the bottom of the dropdown */
   body.has-sidebar .sidebar .theme-toggle {
-    margin: 0.75rem auto 0;
+    margin: 1rem auto 0;
+  }
+
+  /* Clear the fixed band; keep anchor jumps from hiding under it */
+  body.has-sidebar {
+    padding-top: calc(var(--mobile-nav-h) + 1.25rem);
+  }
+  html {
+    scroll-padding-top: calc(var(--mobile-nav-h) + 0.5rem);
   }
 }
 
