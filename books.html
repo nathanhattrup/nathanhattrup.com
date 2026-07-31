@@ -54,6 +54,17 @@
   <br>
 </div>
 
+<!-- Currently Reading - same deal as Favorites: header + intro text are
+     static HTML, JS appends the covers grid. Hidden if no book has
+     current: true. These books do NOT appear in the All section. -->
+<div id="currently-reading">
+  <h2>Currently Reading</h2>
+  <p>Here are the titles I'm currently working through.</p>
+  <br>
+</div>
+
+<h2>All</h2>
+
 <!-- Files-app style toolbar: view toggle + sort controls.
      Only affects the All section below it. -->
 <div class="book-toolbar" role="toolbar" aria-label="Bookshelf controls">
@@ -177,8 +188,9 @@ function sortedBooks() {
   var get = key === 'title' ? titleKey
           : key === 'author' ? authorKey
           : function (b) { return b.read; };
-  // slice() so the original BOOKS order is never mutated
-  return BOOKS.slice().sort(function (a, b) {
+  // filter() also copies, so the original BOOKS order is never mutated.
+  // current: true books live only in the Currently Reading section.
+  return BOOKS.filter(function (b) { return !b.current; }).sort(function (a, b) {
     var ka = get(a), kb = get(b);
     return ka < kb ? -dir : ka > kb ? dir : 0;
   });
@@ -244,30 +256,27 @@ function buildTable(books) {
   return wrap;
 }
 
-function sectionHeader(text) {
-  var h = document.createElement('h2');
-  h.textContent = text;
-  return h;
-}
-
-// Favorites: books with fav: true. Fixed design - covers with text
+// Favorites / Currently Reading: fixed design - covers with text
 // underneath, alphabetical by title, unaffected by the toolbar.
-// The header + any intro text are static HTML inside #favorites;
-// this only appends the grid and the "All" header after them.
-(function renderFavorites() {
-  var favs = BOOKS.filter(function (b) { return b.fav; }).sort(function (a, b) {
+// Each section's header + intro text are static HTML in the div;
+// this only appends the grid after them, and hides the whole div
+// (static text included) when no book matches.
+function renderFixedSection(id, pick) {
+  var picked = BOOKS.filter(pick).sort(function (a, b) {
     return titleKey(a) < titleKey(b) ? -1 : 1;
   });
-  var el = document.getElementById('favorites');
-  if (!favs.length) {
-    el.style.display = 'none'; // hides the static header/text too
+  var el = document.getElementById(id);
+  if (!picked.length) {
+    el.style.display = 'none';
     return;
   }
-  el.appendChild(buildGrid(favs, true));
-  el.appendChild(sectionHeader('All'));
-})();
+  el.appendChild(buildGrid(picked, true));
+}
+renderFixedSection('favorites', function (b) { return b.fav; });
+renderFixedSection('currently-reading', function (b) { return b.current; });
 
-// The full shelf (favorites repeat here) - obeys toolbar view + sort
+// The full shelf (favorites repeat here, current reads do not)
+// - obeys toolbar view + sort
 function render() {
   var books = sortedBooks();
   shelf.innerHTML = '';

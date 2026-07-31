@@ -13,6 +13,9 @@
 //      format - "audio" for audiobooks, omit for print
 //      fav    - true puts the book in the Favorites section at the top
 //               of the page (alphabetical, cover + title/author shown)
+//      current - true puts the book in the Currently Reading section
+//               instead of the All shelf (it is excluded from All).
+//               Drop this flag and give it a "read" date when finished.
 //      sortTitle / sortAuthor - optional overrides for sorting, only
 //               needed when the default (title minus leading "The/A/An",
 //               author's last word) gets it wrong.
@@ -32,24 +35,28 @@ const BOOKS = [
 
   // --- 2024 ---
   { slug: "book-of-methods",     title: "The Book of Methods",    author: "Louie Simmons",       read: "2024-01" },
-  { slug: "republic-of-pirates", title: "The Republic of Pirates", author: "Colin Woodard",      read: "2024-05", format: "audio", fav: true },
-  { slug: "the-war-of-art",      title: "The War of Art",         author: "Steven Pressfield",   read: "2024-03", format: "audio" },
-  { slug: "body-recomposition",  title: "The Ultimate Guide to Body Recomposition", author: "Jeff Nippard", read: "2024-04" },
-  { slug: "catcher-in-the-rye",  title: "The Catcher in the Rye", author: "J.D. Salinger",       read: "2024-02" },
+  { slug: "cant-hurt-me",        title: "Can't Hurt Me",          author: "David Goggins",       read: "2024-02", format: "audio" },
+  { slug: "republic-of-pirates", title: "The Republic of Pirates", author: "Colin Woodard",      read: "2024-03", format: "audio", fav: true },
+  { slug: "the-war-of-art",      title: "The War of Art",         author: "Steven Pressfield",   read: "2024-05", format: "audio" },
+  { slug: "body-recomposition",  title: "The Ultimate Guide to Body Recomposition", author: "Jeff Nippard", read: "2024-06" },
+  { slug: "catcher-in-the-rye",  title: "The Catcher in the Rye", author: "J.D. Salinger",       read: "2024-04" },
 
   // --- 2025 ---
   { slug: "mother-of-god",       title: "Mother of God",          author: "Paul Rosolie",        read: "2025-02" },
   { slug: "catch-22",            title: "Catch-22",               author: "Joseph Heller",       read: "2025-01" },
-  { slug: "ruthless-elimination-of-hurry", title: "The Ruthless Elimination of Hurry", author: "John Comer", read: "2025-04" },
+  { slug: "ruthless-elimination-of-hurry", title: "The Ruthless Elimination of Hurry", author: "John Mark Comer", read: "2025-04" },
   { slug: "the-lean-startup",    title: "The Lean Startup",       author: "Eric Ries",           read: "2025-03", format: "audio" },
 
   // --- 2026 ---
   { slug: "river-of-darkness",   title: "River of Darkness",      author: "Buddy Levy",          read: "2026-02", fav: true },
   { slug: "robinson-crusoe",     title: "Robinson Crusoe",        author: "Daniel Defoe",        read: "2026-03", format: "audio" },
   { slug: "the-great-heist",     title: "The Great Heist",        author: "Andrew Badger and David Shedd", read: "2026-04", sortAuthor: "Badger" },
-  // First read 2024, re-read June 2026 - sorts by the latest read
-  { slug: "cant-hurt-me",        title: "Can't Hurt Me",          author: "David Goggins",       read: "2026-05", format: "audio" },
   { slug: "the-big-leap",        title: "The Big Leap",           author: "Gay Hendricks",       read: "2026-06-01", format: "audio" },
   { slug: "junglekeeper",        title: "Junglekeeper",           author: "Paul Rosolie",        read: "2026-06-02", fav: true },
   { slug: "zero-to-one",         title: "Zero to One",            author: "Peter Thiel",         read: "2026-06-03", format: "audio" },
+
+  // --- Currently reading (no read date until finished) ---
+  { slug: "live-no-lies",        title: "Live No Lies",           author: "John Mark Comer",     current: true },
+  { slug: "uav-design",          title: "Small Unmanned Fixed-wing Aircraft Design: A Practical Approach", author: "Andrew J. Keane, András Sóbester, and James P. Scanlan", current: true, sortTitle: "Small Unmanned Fixed-wing Aircraft Design", sortAuthor: "Keane" },
+  { slug: "never-finished",      title: "Never Finished",         author: "David Goggins",       current: true, format: "audio" },
 ];
