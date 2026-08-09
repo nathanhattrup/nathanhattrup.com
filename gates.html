@@ -3,16 +3,17 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nathan Hattrup</title>
+    <title>Gates &ndash; Nathan Hattrup</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="prism/prism.css" />
+
   <link rel="icon" href="images/favicon/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="images/favicon/favicon-32.png" type="image/png" sizes="32x32">
   <link rel="apple-touch-icon" href="images/favicon/apple-touch-icon.png">
-  <link rel="canonical" href="https://www.nathanhattrup.com/" />
+  <link rel="canonical" href="https://www.nathanhattrup.com/gates" />
+  <meta name="description" content="Gates — a daily logic-gate puzzle. Read the circuit, fill in the truth table, three tries.">
 </head>
 
-<body class="text-justify has-sidebar">
+<body class="has-sidebar">
 <script>if (localStorage.getItem('theme') === 'dark') document.body.classList.add('latex-dark');</script>
 <div class="progress-bar"></div>
     <aside class="sidebar" aria-label="Site navigation">
@@ -20,13 +21,13 @@
       <nav id="site-nav">
         <h2>Contents</h2>
         <ol>
-          <li><a href="index.html" aria-current="page">HOME</a></li>
+          <li><a href="index.html">HOME</a></li>
           <li><a href="projects.html">PROJECTS</a></li>
           <li><a href="courses.html">COURSES</a></li>
-          <li><a href="trips.html">TRIPS</a></li>
-          <li><a href="books.html">BOOKS</a></li>
+		  <li><a href="trips.html">TRIPS</a></li>
+		  <li><a href="books.html">BOOKS</a></li>
           <li><a href="lifts.html">LIFTS</a></li>
-          <li><a href="gates.html">GATES</a></li>
+          <li><a href="gates.html" aria-current="page">GATES</a></li>
         </ol>
         <button class="theme-toggle" type="button" aria-pressed="false">Dark Mode</button>
       </nav>
@@ -35,70 +36,101 @@
     <div class="content">
 
 <header>
-	<h1>Nathan Hattrup</h1>
-	<p class="author">
-      Last Updated <br/>
-      July 5<sup>th</sup>, 2026
-    </p>
+	<h1>Gates</h1>
 </header>
-
-<div class="abstract">
-  <p> <i>BS Electrical Engineering</i> (awarded)<br>
-    <i>MS Electrical Engineering</i> (in progress)<br>
-    <i>MS Nuclear Engineering</i> (in progress)<br>
-    North Carolina State University<br>
-    <a href="#" onclick="navigator.clipboard.writeText('nathanhattrup@gmail.com'); this.textContent='Copied!'; setTimeout(() => this.textContent='nathanhattrup[at]gmail[dot]com', 1000); return false;">
-  nathanhattrup[at]gmail[dot]com</a>
-  </p>
-</div>
 
 <main>
 <article>
 
-<figure>
-	<img src="images/me_and_blair.JPEG" alt="Blair and I"/>
-	<figcaption>
-	My girlfriend Blair and I.
-	</figcaption>
-</figure>
+<p class="gates-meta">
+  <span id="gates-day"></span>
+  <button type="button" class="gates-btn" id="gates-help">How&nbsp;to&nbsp;play</button>
+</p>
 
-<h2>Bio</h2>
-<p>Originally from Overland Park, Kansas, I moved to Raleigh, North Carolina to attend North Carolina State University. 
-  I graduated magna cum laude with a BS in Electrical Engineering in the Spring of 2026. I am now pursuing a masters in both electrical 
-  and nuclear engineering.
-<br><br>
+<noscript><p>Gates needs JavaScript — the whole game runs in your browser, nothing is sent anywhere.</p></noscript>
 
-My passions lie in the energy industry as a whole&mdash;not only the technologies that power it, but also the economics and policies that shape it.
- It is here that I wish to further cultivate my career, attempting to push the envelope of innovation both personally and professionally.<br><br>
+<div id="gates-app">
+  <p id="gates-banner" class="gates-banner" hidden></p>
 
-During my time in electrical engineering, I have also fallen in love with embedded systems and computer engineering as a whole. It has been deeply rewarding to grow in these
-	areas through elective courses, projects, and outside learnings. <br><br>
-	
-Outside of academics, I enjoy competing in powerlifting, exploring the outdoors, and spending time with friends.
+  <div id="gates-circuit" class="gates-circuit"></div>
 
-<h2>Travel</h2>
-<figure>
-  <div id="globe" aria-label="Spinning globe marking places I have visited"></div>
-  <figcaption>Where I've been around the world!</figcaption>
-  <p>If you want to see more of the highlights, check out my <a href="trips.html">Trips</a> page!</p>
-</figure>
+  <p class="gates-controls">
+    <label><input type="checkbox" id="gates-scratch-toggle" checked> Show scratch columns C and D</label>
+  </p>
 
-<h2>Currently</h2>
-<ul>
-  <li>Interning with Burns & McDonnell</li>
-  <li>Continuing work on our senior design project through the support of the Andrews Launch Accelerator</li>
-</ul>
+  <table class="gates-table" id="gates-table">
+    <thead>
+      <tr>
+        <th scope="col">A</th>
+        <th scope="col">B</th>
+        <th scope="col">C <span class="gates-colnote">scratch</span></th>
+        <th scope="col">D <span class="gates-colnote">scratch</span></th>
+        <th scope="col">Q <span class="gates-colnote">answer</span></th>
+      </tr>
+    </thead>
+    <tbody id="gates-tbody"></tbody>
+  </table>
 
+  <p id="gates-lives" class="gates-lives"></p>
+  <p id="gates-msg" class="gates-msg" role="status" aria-live="polite"></p>
 
-<div class="footnotes">
-<p>The library 
-<a href="https://github.com/vincentdoerig/latex-css" target="_blank"><span class="latex">L<span>a</span>T<span>e</span>X</span>.css</a> 
-was used extensively for this project. </p>
+  <p class="gates-actions">
+    <button type="button" class="gates-btn" id="gates-submit">Submit</button>
+    <button type="button" class="gates-btn" id="gates-share" hidden>Share result</button>
+  </p>
+
+  <p id="gates-streak" class="gates-streak"></p>
+
+  <div id="gates-archive" class="gates-archive">
+    <h2>Archive</h2>
+    <p>Replay any day since launch. Archive plays are recorded but never touch your streak.</p>
+    <p>
+      <label>Pick a date: <input type="date" id="gates-archive-date"></label>
+      <a href="gates.html" id="gates-back-today" hidden>&larr; Back to today</a>
+    </p>
+  </div>
 </div>
 
 </article>
 </main>
+</div>
 
+<div class="gates-modal" id="gates-modal" role="dialog" aria-modal="true" aria-labelledby="gates-modal-title" hidden>
+  <div class="gates-modal-box">
+    <button type="button" class="gates-modal-close" id="gates-modal-close" aria-label="Close">&times;</button>
+    <h2 id="gates-modal-title">How to play</h2>
+    <p>Each day you get one circuit. Inputs <strong>A</strong> and <strong>B</strong> run through
+    two gates whose outputs are <strong>C</strong> and <strong>D</strong>, which feed a final gate
+    that produces <strong>Q</strong>. Work out what <strong>Q</strong> is for all four input
+    combinations and fill in the Q column — tap a cell to cycle empty&nbsp;&rarr;&nbsp;0&nbsp;&rarr;&nbsp;1.</p>
+    <p>A small circle (&#9675;) on a wire is a <strong>NOT bubble</strong>: it flips that input
+    before it reaches the gate.</p>
+    <p>The <strong>C</strong> and <strong>D</strong> columns are optional scratch paper for working
+    through the two middle wires. They are never checked and never affect your result.</p>
+    <p>You have <strong>three tries</strong>. A submission only tells you correct or not — no hints
+    about which rows are wrong. Duplicate or incomplete submissions don't cost a life.</p>
+    <h3>The six gates</h3>
+    <div class="gates-gate-ref">
+      <table class="gates-mini"><caption>AND</caption>
+        <thead><tr><th>A</th><th>B</th><th>out</th></tr></thead>
+        <tbody><tr><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>1</td></tr></tbody></table>
+      <table class="gates-mini"><caption>NAND</caption>
+        <thead><tr><th>A</th><th>B</th><th>out</th></tr></thead>
+        <tbody><tr><td>0</td><td>0</td><td>1</td></tr><tr><td>0</td><td>1</td><td>1</td></tr><tr><td>1</td><td>0</td><td>1</td></tr><tr><td>1</td><td>1</td><td>0</td></tr></tbody></table>
+      <table class="gates-mini"><caption>OR</caption>
+        <thead><tr><th>A</th><th>B</th><th>out</th></tr></thead>
+        <tbody><tr><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>1</td></tr><tr><td>1</td><td>0</td><td>1</td></tr><tr><td>1</td><td>1</td><td>1</td></tr></tbody></table>
+      <table class="gates-mini"><caption>NOR</caption>
+        <thead><tr><th>A</th><th>B</th><th>out</th></tr></thead>
+        <tbody><tr><td>0</td><td>0</td><td>1</td></tr><tr><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>0</td></tr></tbody></table>
+      <table class="gates-mini"><caption>XOR</caption>
+        <thead><tr><th>A</th><th>B</th><th>out</th></tr></thead>
+        <tbody><tr><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>1</td></tr><tr><td>1</td><td>0</td><td>1</td></tr><tr><td>1</td><td>1</td><td>0</td></tr></tbody></table>
+      <table class="gates-mini"><caption>XNOR</caption>
+        <thead><tr><th>A</th><th>B</th><th>out</th></tr></thead>
+        <tbody><tr><td>0</td><td>0</td><td>1</td></tr><tr><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>1</td></tr></tbody></table>
+    </div>
+  </div>
 </div>
 
 <a href="#" class="back-to-top" aria-label="Back to top">&uarr;</a>
@@ -110,13 +142,8 @@ was used extensively for this project. </p>
   <button class="lightbox-next" aria-label="Next" onclick="event.stopPropagation();lightboxNav(1)">&rsaquo;</button>
 </div>
 
-<script src="assets/d3.v7.min.js"></script>
-<script src="assets/topojson-client.min.js"></script>
-<script src="assets/land-110m.js"></script>
-<script src="assets/countries-110m.js"></script>
-<script src="assets/us-states-110m.js"></script>
-<script src="assets/locations.js"></script>
-<script src="assets/globe.js"></script>
+<script src="assets/gates-data.js"></script>
+<script src="assets/gates.js"></script>
 
 <script>
 // Clean URLs: GitHub Pages serves /trips for trips.html, so hide the
@@ -137,7 +164,7 @@ if (location.protocol !== 'file:' && /\.html$/.test(location.pathname)) {
   btn.addEventListener('click', function() {
     document.body.classList.toggle('latex-dark');
     localStorage.setItem('theme', document.body.classList.contains('latex-dark') ? 'dark' : 'light');
-    // Nudge canvas redraws (travel globe) so line color follows the new theme
+    // Nudge canvas/SVG redraws (globe, lifting charts) so colors follow the new theme
     window.dispatchEvent(new Event('resize'));
     syncLabel();
   });
@@ -195,14 +222,10 @@ function openLightbox(img) {
     var imgs = gallery.querySelectorAll('img');
     lbImages = [];
     imgs.forEach(function(i) {
-      var fig = i.closest('figure');
-      var capEl = fig ? fig.querySelector('figcaption') : null;
       lbImages.push({ src: i.src, alt: i.alt });
     });
     lbIndex = Array.from(imgs).indexOf(img);
   } else {
-    var fig = img.closest('figure');
-    var capEl = fig ? fig.querySelector('figcaption') : null;
     lbImages = [{ src: img.src, alt: img.alt }];
     lbIndex = 0;
   }

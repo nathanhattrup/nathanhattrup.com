@@ -1962,3 +1962,274 @@ table.liftresults .att-miss {
     display: none;            /* print just shows the shelf as-is */
   }
 }
+
+/* ============================================================
+   GATES — daily logic-gate puzzle (gates.html)
+   ============================================================ */
+
+/* Meta line: day number left, help button right */
+.gates-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+#gates-day {
+  font-style: italic;
+}
+
+/* Small bordered action button, LaTeX-flavored */
+.gates-btn {
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.25rem 0.9rem;
+  background: none;
+  border: var(--border-width-thin) solid var(--body-color);
+  color: var(--body-color);
+  cursor: pointer;
+}
+.gates-btn:hover {
+  background: var(--body-color);
+  color: var(--body-bg-color);
+}
+
+.gates-banner {
+  font-style: italic;
+}
+
+/* Circuit drawing — currentColor everywhere so dark mode is automatic */
+.gates-circuit {
+  max-width: 26rem;
+  margin: 1.5rem auto 0;
+}
+.gates-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  color: var(--body-color);
+}
+.gates-svg line,
+.gates-svg path,
+.gates-svg rect {
+  stroke: currentColor;
+  stroke-width: 1.4;
+  fill: none;
+}
+.gates-svg .not {
+  stroke: currentColor;
+  stroke-width: 1.4;
+  fill: var(--body-bg-color);   /* bubble sits on top of the wire */
+}
+.gates-svg text {
+  fill: currentColor;
+  stroke: none;
+}
+.gates-svg .inlabel,
+.gates-svg .nodelabel {
+  font-style: italic;
+  font-size: 17px;
+}
+.gates-svg .gatelabel {
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+/* After the day resolves, tie the C/D wire labels to the revealed columns */
+.gates-svg.gates-reveal .nodelabel {
+  fill: var(--chart-deadlift);
+  font-weight: 700;
+}
+
+/* Truth table: A/B read-only, C/D/Q tappable tri-state cells.
+   44px minimum tap targets; columns compress before anything scrolls. */
+.gates-table {
+  margin-left: auto;
+  margin-right: auto;
+}
+.gates-table th,
+.gates-table td {
+  text-align: center;
+  padding: 0 0.4rem;
+}
+.gates-table td {
+  font-variant-numeric: tabular-nums;
+}
+.gates-colnote {
+  display: block;
+  font-weight: 400;
+  font-style: italic;
+  font-size: 0.7rem;
+}
+.gates-cell {
+  display: block;
+  width: 100%;
+  min-width: 44px;
+  min-height: 44px;
+  margin: 0 auto;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 1.05rem;
+  font-variant-numeric: tabular-nums;
+  color: inherit;
+  cursor: pointer;
+}
+.gates-cell:hover:not(:disabled),
+.gates-cell:focus-visible {
+  background: var(--pre-bg-color);
+}
+.gates-cell.empty {
+  opacity: 0.35;
+}
+.gates-cell:disabled {
+  cursor: default;
+}
+/* On reveal, Q cells the player had wrong (or empty) show in red */
+.gates-cell.corrected {
+  color: var(--chart-deadlift);
+  font-weight: 700;
+  opacity: 1;
+}
+/* Hide-scratch toggle drops the C and D columns (they carry no scored state) */
+.gates-table.hide-scratch th:nth-child(3),
+.gates-table.hide-scratch th:nth-child(4),
+.gates-table.hide-scratch td:nth-child(3),
+.gates-table.hide-scratch td:nth-child(4) {
+  display: none;
+}
+
+.gates-controls {
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.gates-lives {
+  text-align: center;
+  font-size: 0.95rem;
+}
+.gates-dots {
+  letter-spacing: 0.35em;
+  margin-left: 0.35em;
+}
+
+.gates-msg {
+  min-height: 1.5em;
+  text-align: center;
+  font-style: italic;
+}
+.gates-msg.good { color: var(--chart-bench); }
+.gates-msg.bad  { color: var(--chart-deadlift); }
+
+.gates-actions {
+  text-align: center;
+}
+.gates-actions .gates-btn {
+  margin: 0 0.35rem;
+}
+
+.gates-streak {
+  text-align: center;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+.gates-archive {
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  border-top: var(--border-width-thin) solid var(--footnotes-border-color);
+}
+.gates-archive h2 {
+  margin-top: 0;
+}
+#gates-archive-date {
+  font: inherit;
+  font-size: 0.95rem;
+  background: none;
+  color: inherit;
+  border: var(--border-width-thin) solid var(--body-color);
+  padding: 0.15rem 0.4rem;
+}
+#gates-back-today {
+  margin-left: 1rem;
+}
+
+/* Pre-launch: banner only, game hidden until Preview is pressed */
+.gates-prelaunch .gates-circuit,
+.gates-prelaunch .gates-controls,
+.gates-prelaunch .gates-table,
+.gates-prelaunch .gates-lives,
+.gates-prelaunch .gates-msg,
+.gates-prelaunch .gates-actions,
+.gates-prelaunch .gates-streak {
+  display: none;
+}
+
+/* Tutorial modal — overlay pattern shared with the lightbox */
+.gates-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.gates-modal[hidden] {
+  display: none;
+}
+.gates-modal-box {
+  position: relative;
+  background: var(--body-bg-color);
+  color: var(--body-color);
+  border: var(--border-width-thin) solid var(--table-border-color);
+  max-width: 34rem;
+  max-height: 90vh;
+  overflow: auto;
+  padding: 1.5rem 2rem;
+}
+.gates-modal-box > * + * {
+  margin-top: 0.9em;
+}
+.gates-modal-close {
+  position: absolute;
+  top: 0.3rem;
+  right: 0.7rem;
+  border: none;
+  background: none;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: inherit;
+  cursor: pointer;
+}
+.gates-gate-ref {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+  gap: 1rem;
+}
+.gates-mini {
+  font-size: 0.8rem;
+  margin: 0 auto;
+}
+.gates-mini th,
+.gates-mini td {
+  text-align: center;
+  padding: 0.1rem 0.45rem;
+}
+/* No "Table N." prefix on the reference tables */
+.gates-mini caption::before {
+  content: none;
+}
+.gates-mini {
+  counter-increment: none;
+}
+
+@media print {
+  .gates-modal,
+  .gates-actions,
+  .gates-archive,
+  .gates-controls {
+    display: none;
+  }
+}
