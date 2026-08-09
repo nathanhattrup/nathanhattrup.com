@@ -2036,8 +2036,8 @@ table.liftresults .att-miss {
 }
 .gates-symsvg {
   display: block;
-  margin: 0 auto 0.15rem;
-  width: 4.2rem;
+  margin: 0 auto 0.25rem;
+  width: 7rem;
   height: auto;
   color: var(--body-color);
 }
