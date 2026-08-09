@@ -535,64 +535,37 @@
   }
 
   /* ---------- archive (spec §12 archive.js) ----------
-     Calendar of every day from the epoch through today, one clickable
-     cell per day labelled with its puzzle number. Only [epoch, today]
-     is ever rendered, and the ?date= URL is re-checked on load anyway. */
-
-  var MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June',
-                     'July', 'August', 'September', 'October', 'November', 'December'];
-  var WEEKDAY_HEADER = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+     One clickable cell per day from the epoch through today, labelled
+     with its puzzle number: a plain grid, 10 per row, growing left to
+     right, top to bottom. Only [epoch, today] is ever rendered, and
+     the ?date= URL is re-checked on load anyway. */
 
   function initArchive() {
     if (todayStr < epoch) { els.archive.hidden = true; return; }
 
     // Walk day by day from epoch to today with calendar-safe local Dates
-    // (setDate handles month ends and DST), grouping cells by month.
+    // (setDate handles month ends and DST).
     var parts = epoch.split('-').map(Number);
     var cur = new Date(parts[0], parts[1] - 1, parts[2]);
-    var months = [];   // [{ label, cells: [{dateStr, dayNum, status, isToday}] }]
-    var month = null;
+    var html = '';
     while (true) {
       var ds = localDateStr(cur);
       if (ds > todayStr) break;
-      var key = MONTH_NAMES[cur.getMonth()] + ' ' + cur.getFullYear();
-      if (!month || month.label !== key) {
-        month = { label: key, firstWeekday: cur.getDay(), cells: [] };
-        months.push(month);
-      }
       var entry = store.history[ds];
       var status = '';
       if (entry && Array.isArray(entry.attempts) && entry.attempts.length) {
         status = entry.attempts[entry.attempts.length - 1] ? 'won' : 'lost';
       }
-      month.cells.push({
-        dateStr: ds,
-        dayNum: dayNumber(ds, epoch),
-        status: status,
-        isToday: ds === todayStr
-      });
+      var isToday = ds === todayStr;
+      var cls = 'gates-cal-cell' + (status ? ' ' + status : '') +
+        (isToday ? ' today' : '') + (ds === game.dateStr ? ' current' : '');
+      var href = isToday ? 'gates.html' : 'gates.html?date=' + ds;
+      var state = status === 'won' ? 'solved' : status === 'lost' ? 'missed' : 'not played yet';
+      html += '<a class="' + cls + '" href="' + href + '" aria-label="Puzzle No. ' +
+        dayNumber(ds, epoch) + ', ' + ds + ', ' + state + '">' + dayNumber(ds, epoch) + '</a>';
       cur.setDate(cur.getDate() + 1);
     }
-
-    // Newest month first — the days you most likely want are on top.
-    var html = '';
-    months.slice().reverse().forEach(function (m) {
-      html += '<div class="gates-cal-month"><h3>' + m.label + '</h3><div class="gates-cal-grid">';
-      WEEKDAY_HEADER.forEach(function (w) {
-        html += '<span class="gates-cal-wd" aria-hidden="true">' + w + '</span>';
-      });
-      for (var i = 0; i < m.firstWeekday; i++) html += '<span></span>';
-      m.cells.forEach(function (c) {
-        var cls = 'gates-cal-cell' + (c.status ? ' ' + c.status : '') +
-          (c.isToday ? ' today' : '') + (c.dateStr === game.dateStr ? ' current' : '');
-        var href = c.isToday ? 'gates.html' : 'gates.html?date=' + c.dateStr;
-        var state = c.status === 'won' ? 'solved' : c.status === 'lost' ? 'missed' : 'not played yet';
-        html += '<a class="' + cls + '" href="' + href + '" aria-label="Puzzle No. ' +
-          c.dayNum + ', ' + c.dateStr + ', ' + state + '">' + c.dayNum + '</a>';
-      });
-      html += '</div></div>';
-    });
-    els.archiveCal.innerHTML = html;
+    els.archiveCal.innerHTML = '<div class="gates-cal-grid">' + html + '</div>';
     els.backToday.hidden = game.mode !== 'archive';
   }
 

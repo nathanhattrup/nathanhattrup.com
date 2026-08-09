@@ -2147,26 +2147,14 @@ table.liftresults .att-miss {
 .gates-archive h2 {
   margin-top: 0;
 }
-/* Archive calendar: one month per block, 7-column week grid, each cell a
-   puzzle number. Solved/missed coloring comes from localStorage history. */
-.gates-cal-month h3 {
-  font-size: 1.05rem;
-  margin-bottom: 0.4rem;
-}
-.gates-cal-month + .gates-cal-month {
-  margin-top: 1.25rem;
-}
+/* Archive grid: puzzle numbers 0..today, 10 per row, left to right,
+   top to bottom. Solved/missed coloring comes from localStorage history. */
 .gates-cal-grid {
   display: grid;
-  grid-template-columns: repeat(7, minmax(2.4rem, 3.2rem));
+  grid-template-columns: repeat(10, 1fr);
   gap: 0.3rem;
-  justify-content: center;
-}
-.gates-cal-wd {
-  text-align: center;
-  font-size: 0.75rem;
-  font-style: italic;
-  opacity: 0.6;
+  max-width: 32rem;
+  margin: 0 auto;
 }
 .gates-cal-cell {
   display: flex;
@@ -2175,8 +2163,18 @@ table.liftresults .att-miss {
   min-height: 2.4rem;
   border: var(--border-width-thin) solid var(--body-color);
   font-variant-numeric: tabular-nums;
+  font-size: 0.95rem;
   text-decoration: none;
   color: var(--body-color) !important;   /* beat the link/visited colors */
+}
+@media (max-width: 640px) {
+  .gates-cal-grid {
+    gap: 0.2rem;
+  }
+  .gates-cal-cell {
+    min-height: 2.2rem;
+    font-size: 0.8rem;
+  }
 }
 .gates-cal-cell:hover {
   background: var(--pre-bg-color);
