@@ -32,11 +32,6 @@
   var STRINGS = {
     header: 'No. {n} · {date}',                 // daily title line
     headerArchiveSuffix: ' · archive',          // appended when replaying a past day
-    headerPreviewPrefix: 'Preview · ',          // prepended in pre-launch preview
-    launchesLabel: 'Launches {date}',           // title line before launch
-    launchBanner: 'The first puzzle unlocks on <strong>{date}</strong>. ',
-    previewButton: 'Preview it now',
-    previewNote: ' — preview only, nothing is saved.',
     archiveBanner: 'Archive play — counts in your history, never toward your streak.',
     livesLabel: 'Lives',
     incomplete: 'Fill in all four Q cells to submit — C and D are optional scratch.',
@@ -254,7 +249,7 @@
   var todayStr = localDateStr();
   var epoch = DATA.epoch;
 
-  // mode: 'daily' | 'archive' | 'preview' (preview: pre-launch spot-check, nothing saved)
+  // mode: 'daily' | 'archive'
   var game = null; // { mode, dateStr, dayNum, puzzle, c, d, q, tried, attempts, resolved, won }
 
   function newGame(mode, dateStr) {
@@ -365,7 +360,6 @@
   function renderHeader() {
     var label = fmt(STRINGS.header, { n: game.dayNum, date: game.dateStr });
     if (game.mode === 'archive') label += STRINGS.headerArchiveSuffix;
-    if (game.mode === 'preview') label = STRINGS.headerPreviewPrefix + label;
     els.day.textContent = label;
   }
 
@@ -399,13 +393,10 @@
     var svg = els.circuit.querySelector('.gates-svg');
     if (svg) svg.classList.add('gates-reveal');
     els.submit.hidden = true;
-    if (game.mode !== 'preview') {
-      els.share.hidden = false;
-    }
+    els.share.hidden = false;
   }
 
   function recordResolution() {
-    if (game.mode === 'preview') return; // spot-check mode: nothing recorded
     var entry = { attempts: game.attempts.slice(), archive: game.mode === 'archive' };
     store.history[game.dateStr] = entry;
     if (game.mode === 'daily') {
@@ -577,7 +568,7 @@
     els.circuit.innerHTML = circuitSVG(game.puzzle);
     renderTable();
 
-    var entry = (mode !== 'preview') && store.history[dateStr];
+    var entry = store.history[dateStr];
     if (entry && Array.isArray(entry.attempts) && entry.attempts.length) {
       showResolved(entry);
     } else {
@@ -599,33 +590,19 @@
   function init() {
     initModal();
 
+    // Clock-skew guard: a device whose local date is somehow before the
+    // epoch still gets the first puzzle rather than a negative day number.
+    if (todayStr < epoch) todayStr = epoch;
+
+    /* Archive is disabled for now. To restore it, uncomment this block
+       (and the archive markup in gates.html), and move the plain
+       startGame call below into the else branch.
+
     var params = new URLSearchParams(location.search);
     var reqDate = params.get('date');
 
-    if (todayStr < epoch) {
-      // Pre-launch: daily puzzle 0 belongs to the epoch date. Offer an
-      // explicit preview that records nothing, for spot-checking.
-      els.banner.hidden = false;
-      els.banner.innerHTML = fmt(STRINGS.launchBanner, { date: epoch }) +
-        '<button type="button" class="gates-btn" id="gates-preview-btn">' + STRINGS.previewButton + '</button>' +
-        '<span class="gates-preview-note" hidden>' + STRINGS.previewNote + '</span>';
-      els.app.classList.add('gates-prelaunch');
-      document.getElementById('gates-preview-btn').addEventListener('click', function (e) {
-        e.target.hidden = true;
-        els.banner.querySelector('.gates-preview-note').hidden = false;
-        els.app.classList.remove('gates-prelaunch');
-        startGame('preview', epoch);
-      });
-      els.archive.hidden = true;
-      els.day.textContent = fmt(STRINGS.launchesLabel, { date: epoch });
-      if (params.get('preview')) {
-        document.getElementById('gates-preview-btn').click();
-      }
-      return;
-    }
-
     // Archive range is [epoch, today]. Reject earlier dates and future
-    // dates; the URL is editable, so re-check here regardless of the picker.
+    // dates; the URL is editable, so re-check here regardless of the grid.
     if (reqDate && /^\d{4}-\d{2}-\d{2}$/.test(reqDate) &&
         reqDate >= epoch && reqDate <= todayStr && reqDate !== todayStr) {
       startGame('archive', reqDate);
@@ -636,6 +613,9 @@
       startGame('daily', todayStr);
     }
     initArchive();
+    */
+
+    startGame('daily', todayStr);
   }
 
   init();

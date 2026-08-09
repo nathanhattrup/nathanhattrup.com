@@ -2197,16 +2197,6 @@ table.liftresults .att-miss {
 .gates-cal-key-won  { color: var(--chart-bench); font-weight: 700; }
 .gates-cal-key-lost { color: var(--chart-deadlift); font-weight: 700; }
 
-/* Pre-launch: banner only, game hidden until Preview is pressed */
-.gates-prelaunch .gates-circuit,
-.gates-prelaunch .gates-table,
-.gates-prelaunch .gates-lives,
-.gates-prelaunch .gates-msg,
-.gates-prelaunch .gates-actions,
-.gates-prelaunch .gates-streak {
-  display: none;
-}
-
 /* Tutorial modal — overlay pattern shared with the lightbox */
 .gates-modal {
   position: fixed;
