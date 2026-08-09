@@ -2147,17 +2147,57 @@ table.liftresults .att-miss {
 .gates-archive h2 {
   margin-top: 0;
 }
-#gates-archive-date {
-  font: inherit;
-  font-size: 0.95rem;
-  background: none;
-  color: inherit;
+/* Archive calendar: one month per block, 7-column week grid, each cell a
+   puzzle number. Solved/missed coloring comes from localStorage history. */
+.gates-cal-month h3 {
+  font-size: 1.05rem;
+  margin-bottom: 0.4rem;
+}
+.gates-cal-month + .gates-cal-month {
+  margin-top: 1.25rem;
+}
+.gates-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(2.4rem, 3.2rem));
+  gap: 0.3rem;
+  justify-content: center;
+}
+.gates-cal-wd {
+  text-align: center;
+  font-size: 0.75rem;
+  font-style: italic;
+  opacity: 0.6;
+}
+.gates-cal-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.4rem;
   border: var(--border-width-thin) solid var(--body-color);
-  padding: 0.15rem 0.4rem;
+  font-variant-numeric: tabular-nums;
+  text-decoration: none;
+  color: var(--body-color) !important;   /* beat the link/visited colors */
 }
-#gates-back-today {
-  margin-left: 1rem;
+.gates-cal-cell:hover {
+  background: var(--pre-bg-color);
 }
+.gates-cal-cell.won {
+  color: var(--chart-bench) !important;
+  border-color: var(--chart-bench);
+  font-weight: 700;
+}
+.gates-cal-cell.lost {
+  color: var(--chart-deadlift) !important;
+  border-color: var(--chart-deadlift);
+  font-weight: 700;
+}
+.gates-cal-cell.today,
+.gates-cal-cell.current {
+  border-width: var(--border-width-thick);
+}
+/* Legend words in the archive intro match the cell colors */
+.gates-cal-key-won  { color: var(--chart-bench); font-weight: 700; }
+.gates-cal-key-lost { color: var(--chart-deadlift); font-weight: 700; }
 
 /* Pre-launch: banner only, game hidden until Preview is pressed */
 .gates-prelaunch .gates-circuit,
