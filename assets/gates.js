@@ -127,6 +127,34 @@
      Strokes/fills use currentColor so dark mode is automatic.
      ============================================================ */
 
+  // Distinctive-shape (ANSI/IEEE) gate symbols, drawn in local coords: the
+  // input edge sits at x=0, the body is 44 tall (inputs enter at y=8 and
+  // y=36, output leaves at y=22). N-variants add the small inversion bubble
+  // at the tip. `tip` is where the output wire starts; `inset` is how far
+  // input wires run past x=0 so they meet the concave OR/XOR back edge.
+  var GATE_SHAPES = {
+    AND:  { paths: ['M0,0 H24 A22,22 0 0 1 24,44 H0 Z'], tip: 46, inset: 0 },
+    OR:   { paths: ['M0,0 Q30,4 46,22 Q30,40 0,44 Q14,22 0,0 Z'], tip: 46, inset: 5 },
+    XOR:  { paths: ['M8,0 Q38,4 54,22 Q38,40 8,44 Q22,22 8,0 Z', 'M0,0 Q14,22 0,44'], tip: 54, inset: 5 }
+  };
+  var GATE_BASE = { AND: 'AND', NAND: 'AND', OR: 'OR', NOR: 'OR', XOR: 'XOR', XNOR: 'XOR' };
+
+  // Markup for one gate placed with its input edge at (x, cy-22)..(x, cy+22).
+  // Returns { svg, outX (abs), inX (abs, where input wires should end) }.
+  function gateMarkup(type, x, cy) {
+    var base = GATE_SHAPES[GATE_BASE[type]];
+    var inverted = type === 'NAND' || type === 'NOR' || type === 'XNOR';
+    var s = '<g transform="translate(' + x + ',' + (cy - 22) + ')">';
+    base.paths.forEach(function (d) { s += '<path d="' + d + '"/>'; });
+    if (inverted) s += '<circle class="not" cx="' + (base.tip + 5.5) + '" cy="22" r="5.5"/>';
+    s += '</g>';
+    return {
+      svg: s,
+      outX: x + base.tip + (inverted ? 11 : 0),
+      inX: x + base.inset
+    };
+  }
+
   function circuitSVG(p) {
     var g1 = p.gates[0], g2 = p.gates[1], g4 = p.gates[2];
     var W = 380, H = 224;
@@ -135,31 +163,32 @@
     var wire = function (x1, y1, x2, y2) {
       return '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '"/>';
     };
+    var top = gateMarkup(g1, 104, 62);
+    var bottom = gateMarkup(g2, 104, 162);
+    var final_ = gateMarkup(g4, 250, 112);
     var s = '';
     // Input labels + wires (labels repeat for each branch, like the schematic)
     for (var i = 0; i < 4; i++) {
       var name = (i % 2 === 0) ? 'A' : 'B';
+      var slot = (i < 2) ? top : bottom;
       s += '<text class="inlabel" x="26" y="' + inY[i] + '" dy="0.35em" text-anchor="end">' + name + '</text>';
-      s += wire(34, inY[i], 104, inY[i]);
+      s += wire(34, inY[i], slot.inX, inY[i]);
       if (p.nots[i]) {
         s += '<circle class="not" cx="95" cy="' + inY[i] + '" r="5.5"/>';
       }
     }
-    // #2 gate boxes
-    s += '<rect x="104" y="36" width="62" height="52"/>';
-    s += '<text class="gatelabel" x="135" y="62" dy="0.35em" text-anchor="middle">' + g1 + '</text>';
-    s += '<rect x="104" y="136" width="62" height="52"/>';
-    s += '<text class="gatelabel" x="135" y="162" dy="0.35em" text-anchor="middle">' + g2 + '</text>';
-    // Branch outputs → final gate, with C/D node labels on the wires
-    s += '<path d="M166,62 H208 V98 H250" fill="none"/>';
-    s += '<path d="M166,162 H208 V126 H250" fill="none"/>';
-    s += '<text class="nodelabel" x="187" y="52" text-anchor="middle">C</text>';
-    s += '<text class="nodelabel" x="187" y="182" text-anchor="middle">D</text>';
-    // #4 final gate
-    s += '<rect x="250" y="86" width="62" height="52"/>';
-    s += '<text class="gatelabel" x="281" y="112" dy="0.35em" text-anchor="middle">' + g4 + '</text>';
+    // #2 gate symbols
+    s += top.svg + bottom.svg;
+    // Branch outputs → final gate, with C/D node labels on the wires.
+    // The vertical drop at x=208 clears every symbol tip (max outX is 169).
+    s += '<path d="M' + top.outX + ',62 H208 V98 H' + (250 + (GATE_BASE[g4] === 'AND' ? 0 : 5)) + '"/>';
+    s += '<path d="M' + bottom.outX + ',162 H208 V126 H' + (250 + (GATE_BASE[g4] === 'AND' ? 0 : 5)) + '"/>';
+    s += '<text class="nodelabel" x="188" y="52" text-anchor="middle">C</text>';
+    s += '<text class="nodelabel" x="188" y="182" text-anchor="middle">D</text>';
+    // #4 final gate symbol
+    s += final_.svg;
     // Output
-    s += wire(312, 112, 344, 112);
+    s += wire(final_.outX, 112, 344, 112);
     s += '<text class="nodelabel" x="352" y="112" dy="0.35em">Q</text>';
 
     var slotNames = ['A into the top gate', 'B into the top gate',
@@ -466,6 +495,17 @@
       if (e.key === 'Escape' && !els.modal.hidden) closeModal();
     });
     if (!store.tutorialSeen) openModal();
+    // Draw each gate's schematic symbol next to its truth table, with short
+    // input/output stubs so it reads like a schematic fragment.
+    document.querySelectorAll('.gates-sym').forEach(function (span) {
+      var type = span.dataset.gate;
+      var g = gateMarkup(type, 10, 24);
+      span.innerHTML = '<svg class="gates-symsvg" viewBox="0 0 88 48" aria-hidden="true">' +
+        '<line x1="0" y1="10" x2="' + (10 + GATE_SHAPES[GATE_BASE[type]].inset) + '" y2="10"/>' +
+        '<line x1="0" y1="38" x2="' + (10 + GATE_SHAPES[GATE_BASE[type]].inset) + '" y2="38"/>' +
+        g.svg +
+        '<line x1="' + g.outX + '" y1="24" x2="' + (g.outX + 10) + '" y2="24"/></svg>';
+    });
   }
 
   /* ---------- archive (spec §12 archive.js) ---------- */

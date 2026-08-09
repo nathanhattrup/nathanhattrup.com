@@ -2030,9 +2030,27 @@ table.liftresults .att-miss {
   font-style: italic;
   font-size: 17px;
 }
-.gates-svg .gatelabel {
-  font-size: 14px;
-  letter-spacing: 0.5px;
+/* Schematic gate symbols in the tutorial legend */
+.gates-sym {
+  display: block;
+}
+.gates-symsvg {
+  display: block;
+  margin: 0 auto 0.15rem;
+  width: 3.4rem;
+  height: auto;
+  color: var(--body-color);
+}
+.gates-symsvg path,
+.gates-symsvg line {
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+}
+.gates-symsvg .not {
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: var(--body-bg-color);
 }
 /* After the day resolves, tie the C/D wire labels to the revealed columns */
 .gates-svg.gates-reveal .nodelabel {
