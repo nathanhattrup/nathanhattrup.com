@@ -15,18 +15,19 @@ def test_invariants():
     """Every emitted puzzle must satisfy every rule. These assertions ARE the spec."""
     p = DATA["puzzles"]
 
-    assert len(p) == 200                                    # locks the space size
+    assert len(p) == 168                                    # locks the space size
     for x in p:
         assert sum(x["nots"]) <= 2                          # max 2 NOTs
         assert not (x["nots"][0] and x["nots"][1])          # top gate not double-NOTted
         assert not (x["nots"][2] and x["nots"][3])          # bottom gate not double-NOTted
+        assert sum(g in ("XOR", "XNOR") for g in x["gates"]) <= 1   # max 1 XOR/XNOR
         assert len(set(x["q"])) == 2                        # Q never constant
         assert x["c"] != x["d"]                             # branches must differ
         assert len(set(x["c"])) == 2 and len(set(x["d"])) == 2   # neither branch constant
 
     # every puzzle is its own logical class -- no two share (sorted branches, final gate)
     keys = {(tuple(sorted([tuple(x["c"]), tuple(x["d"])])), x["gates"][2]) for x in p}
-    assert len(keys) == 200
+    assert len(keys) == 168
 
 
 def test_self_consistent():

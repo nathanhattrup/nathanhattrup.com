@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Regenerate assets/gates-data.js — the 200 logically unique Gates circuits.
+"""Regenerate assets/gates-data.js — the logically unique Gates circuits
+(168 under the current ruleset, which allows at most one XOR/XNOR per puzzle).
 
 Fully deterministic: same rules always produce the same file on any machine.
 Run once (output is committed; rerun only if the ruleset ever changes):
@@ -60,6 +61,8 @@ def enumerate_classes():
             continue                                   # rule: no #2 gate has both inputs NOTted
         for g1, g2 in product(GATES, repeat=2):        # no NAND/NOR cap -- deliberately removed
             for g4 in GATES:
+                if sum(g in ("XOR", "XNOR") for g in (g1, g2, g4)) > 1:
+                    continue                           # rule: at most one XOR/XNOR per puzzle
                 c, d = branch_fn(g1, na1, nb1), branch_fn(g2, na2, nb2)
                 q = tuple(ev(g4, x, y) for x, y in zip(c, d))
                 if q in [(0, 0, 0, 0), (1, 1, 1, 1)]:
