@@ -2202,7 +2202,7 @@ table.liftresults .att-miss {
   background: var(--body-bg-color);
   color: var(--body-color);
   border: var(--border-width-thin) solid var(--table-border-color);
-  max-width: 34rem;
+  max-width: 40rem;
   max-height: 90vh;
   overflow: auto;
   padding: 1.5rem 2rem;
@@ -2223,8 +2223,29 @@ table.liftresults .att-miss {
 }
 .gates-gate-ref {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 1.25rem;
+}
+.gates-gatecard {
+  text-align: center;
+}
+.gates-gatecard > * + * {
+  margin-top: 0.4em;
+}
+.gates-gatename {
+  font-weight: 700;
+}
+.gates-eq {
+  font-weight: 400;
+  font-style: italic;
+}
+/* Boolean NOT: bar over the expression */
+.gates-ov {
+  text-decoration: overline;
+}
+.gates-gatedesc {
+  font-size: 0.85rem;
+  text-align: left;
 }
 .gates-mini {
   font-size: 0.8rem;

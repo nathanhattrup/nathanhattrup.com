@@ -25,6 +25,42 @@
   var HISTORY_LIMIT = 400;
 
   /* ============================================================
+     Player-facing text — edit freely.
+     {curly} placeholders are filled in by the code; keep each one
+     wherever you want that value to land in the sentence.
+     (Tutorial/how-to-play text lives as plain HTML in gates.html.)
+     ============================================================ */
+  var STRINGS = {
+    header: 'No. {n} · {date}',                 // daily title line
+    headerArchiveSuffix: ' · archive',          // appended when replaying a past day
+    headerPreviewPrefix: 'Preview · ',          // prepended in pre-launch preview
+    launchesLabel: 'Launches {date}',           // title line before launch
+    launchBanner: 'The first puzzle unlocks on <strong>{date}</strong>. ',
+    previewButton: 'Preview it now',
+    previewNote: ' — preview only, nothing is saved.',
+    archiveBanner: 'Archive play — counts in your history, never toward your streak.',
+    livesLabel: 'Lives',
+    incomplete: 'Fill in all four Q cells to submit — C and D are optional scratch.',
+    duplicate: 'You already tried that Q column — no life spent.',
+    wrong: 'Not it. {lives} left.',             // {lives} becomes "2 lives" / "1 life"
+    win: 'Correct! Solved in {tries}.',         // {tries} becomes "1 try" / "2 tries"
+    loss: 'Out of lives. The correct table is shown — trace C and D through the circuit to see why.',
+    resolvedWin: 'Solved — {icons}. Come back tomorrow for the next one.',
+    resolvedLoss: 'Missed — {icons}. Come back tomorrow for the next one.',
+    welcomeBack: 'Welcome back — {lives} left.',
+    streakLine: 'Streak {n} · best {m}',
+    copied: 'Copied ✓',
+    copyFailed: 'Copy failed'
+  };
+
+  function fmt(s, vars) {
+    return s.replace(/\{(\w+)\}/g, function (_, k) { return vars[k]; });
+  }
+  function plural(n, word, words) {
+    return n + ' ' + (n === 1 ? word : words);
+  }
+
+  /* ============================================================
      Dating (spec §5.2) — local calendar date, globally synchronised
      ============================================================ */
 
@@ -312,27 +348,32 @@
     });
   }
 
+  // Only wrong submissions spend a life — the winning submission is free.
+  function livesSpent() {
+    return game.attempts.filter(function (ok) { return !ok; }).length;
+  }
+
   function renderLives() {
-    var spent = game.attempts.length;
+    var spent = livesSpent();
     var dots = '';
     for (var i = 0; i < MAX_LIVES; i++) {
       dots += (i < MAX_LIVES - spent) ? '●' : '○';
     }
-    els.lives.innerHTML = 'Lives <span class="gates-dots">' + dots + '</span>';
-    els.lives.setAttribute('aria-label', 'Lives: ' + (MAX_LIVES - spent) + ' of ' + MAX_LIVES + ' remaining');
+    els.lives.innerHTML = STRINGS.livesLabel + ' <span class="gates-dots">' + dots + '</span>';
+    els.lives.setAttribute('aria-label', STRINGS.livesLabel + ': ' + (MAX_LIVES - spent) + ' of ' + MAX_LIVES + ' remaining');
   }
 
   function renderHeader() {
-    var label = 'No. ' + game.dayNum + ' · ' + game.dateStr;
-    if (game.mode === 'archive') label += ' · archive';
-    if (game.mode === 'preview') label = 'Preview · No. ' + game.dayNum + ' · ' + game.dateStr;
+    var label = fmt(STRINGS.header, { n: game.dayNum, date: game.dateStr });
+    if (game.mode === 'archive') label += STRINGS.headerArchiveSuffix;
+    if (game.mode === 'preview') label = STRINGS.headerPreviewPrefix + label;
     els.day.textContent = label;
   }
 
   function renderStreak() {
     if (game.mode !== 'daily') { els.streak.textContent = ''; return; }
     var s = store.streak || 0, m = store.maxStreak || 0;
-    els.streak.textContent = s ? ('Streak ' + s + ' · best ' + m) : '';
+    els.streak.textContent = s ? fmt(STRINGS.streakLine, { n: s, m: m }) : '';
   }
 
   function setMsg(text, tone) {
@@ -389,9 +430,9 @@
     renderLives();
     renderStreak();
     if (won) {
-      setMsg('Correct! Solved in ' + game.attempts.length + (game.attempts.length === 1 ? ' try.' : ' tries.'), 'good');
+      setMsg(fmt(STRINGS.win, { tries: plural(game.attempts.length, 'try', 'tries') }), 'good');
     } else {
-      setMsg('Out of lives. The correct table is shown — trace C and D through the circuit to see why.', 'bad');
+      setMsg(STRINGS.loss, 'bad');
     }
   }
 
@@ -401,7 +442,7 @@
     if (game.resolved) return;
     // Valid only if all four Q cells are filled. C and D are ignored here.
     if (game.q.some(function (v) { return v === null; })) {
-      setMsg('Fill in all four Q cells to submit — C and D are optional scratch.', '');
+      setMsg(STRINGS.incomplete, '');
       return;
     }
     // Duplicate Q column → rejected, no life spent. Q only, never C/D.
@@ -409,7 +450,7 @@
       return t.every(function (v, i) { return v === game.q[i]; });
     });
     if (dup) {
-      setMsg('You already tried that Q column — no life spent.', '');
+      setMsg(STRINGS.duplicate, '');
       return;
     }
     game.tried.push(game.q.slice());
@@ -427,8 +468,8 @@
     // what C and D hold (spec §6.2).
     saveScratch();
     renderLives();
-    var left = MAX_LIVES - game.attempts.length;
-    setMsg('Not it. ' + left + (left === 1 ? ' life' : ' lives') + ' left.', 'bad');
+    var left = MAX_LIVES - livesSpent();
+    setMsg(fmt(STRINGS.wrong, { lives: plural(left, 'life', 'lives') }), 'bad');
   }
 
   /* ---------- resolved-day view (revisiting a finished date) ---------- */
@@ -441,7 +482,7 @@
     renderLives();
     renderStreak();
     var icons = entry.attempts.map(function (ok) { return ok ? '✓' : '✗'; }).join(' ');
-    setMsg((game.won ? 'Solved' : 'Missed') + ' — ' + icons + '. Come back tomorrow for the next one.',
+    setMsg(fmt(game.won ? STRINGS.resolvedWin : STRINGS.resolvedLoss, { icons: icons }),
       game.won ? 'good' : 'bad');
   }
 
@@ -452,7 +493,7 @@
       '\n\n' + SITE_URL;
     copyText(text, function (ok) {
       var old = els.share.textContent;
-      els.share.textContent = ok ? 'Copied ✓' : 'Copy failed';
+      els.share.textContent = ok ? STRINGS.copied : STRINGS.copyFailed;
       setTimeout(function () { els.share.textContent = old; }, 1600);
     });
   }
@@ -541,8 +582,8 @@
       renderLives();
       renderStreak();
       if (game.attempts.length) {
-        var left = MAX_LIVES - game.attempts.length;
-        setMsg('Welcome back — ' + left + (left === 1 ? ' life' : ' lives') + ' left.', '');
+        var left = MAX_LIVES - livesSpent();
+        setMsg(fmt(STRINGS.welcomeBack, { lives: plural(left, 'life', 'lives') }), '');
       }
     }
 
@@ -562,9 +603,9 @@
       // Pre-launch: daily puzzle 0 belongs to the epoch date. Offer an
       // explicit preview that records nothing, for spot-checking.
       els.banner.hidden = false;
-      els.banner.innerHTML = 'The first puzzle unlocks on <strong>' + epoch +
-        '</strong>. <button type="button" class="gates-btn" id="gates-preview-btn">Preview it now</button>' +
-        '<span class="gates-preview-note" hidden> — preview only, nothing is saved.</span>';
+      els.banner.innerHTML = fmt(STRINGS.launchBanner, { date: epoch }) +
+        '<button type="button" class="gates-btn" id="gates-preview-btn">' + STRINGS.previewButton + '</button>' +
+        '<span class="gates-preview-note" hidden>' + STRINGS.previewNote + '</span>';
       els.app.classList.add('gates-prelaunch');
       document.getElementById('gates-preview-btn').addEventListener('click', function (e) {
         e.target.hidden = true;
@@ -573,7 +614,7 @@
         startGame('preview', epoch);
       });
       els.archive.hidden = true;
-      els.day.textContent = 'Launches ' + epoch;
+      els.day.textContent = fmt(STRINGS.launchesLabel, { date: epoch });
       if (params.get('preview')) {
         document.getElementById('gates-preview-btn').click();
       }
@@ -586,7 +627,7 @@
         reqDate >= epoch && reqDate <= todayStr && reqDate !== todayStr) {
       startGame('archive', reqDate);
       els.banner.hidden = false;
-      els.banner.textContent = 'Archive play — counts in your history, never toward your streak.';
+      els.banner.textContent = STRINGS.archiveBanner;
       els.archiveDate.value = reqDate;
     } else {
       if (reqDate) history.replaceState(null, '', location.pathname); // invalid param: drop it

@@ -110,27 +110,76 @@
     <p>The <strong>C</strong> and <strong>D</strong> columns are optional scratch paper for working
     through the two middle wires. They are never checked and never affect your result.</p>
     <p>You have <strong>three tries</strong>. A submission only tells you correct or not — no hints
-    about which rows are wrong. Duplicate or incomplete submissions don't cost a life.</p>
+    about which rows are wrong. Only wrong answers cost a life: the winning submission is free, and
+    duplicate or incomplete submissions are rejected without spending anything.</p>
+    <p>When your day is done, <strong>Share result</strong> copies a spoiler-free summary to your
+    clipboard — the day number and one ✅ or ❌ per try — ready to paste anywhere.</p>
     <h3>The six gates</h3>
+    <p>In the equations below, <strong>AB</strong> means A AND B (multiplication),
+    <strong>A&nbsp;+&nbsp;B</strong> means A OR B, a bar over an expression means NOT (flip it),
+    and <strong>&oplus;</strong> is exclusive-OR.</p>
     <div class="gates-gate-ref">
-      <table class="gates-mini"><caption><span class="gates-sym" data-gate="AND"></span>AND</caption>
-        <thead><tr><th>A</th><th>B</th><th>out</th></tr></thead>
-        <tbody><tr><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>1</td></tr></tbody></table>
-      <table class="gates-mini"><caption><span class="gates-sym" data-gate="NAND"></span>NAND</caption>
-        <thead><tr><th>A</th><th>B</th><th>out</th></tr></thead>
-        <tbody><tr><td>0</td><td>0</td><td>1</td></tr><tr><td>0</td><td>1</td><td>1</td></tr><tr><td>1</td><td>0</td><td>1</td></tr><tr><td>1</td><td>1</td><td>0</td></tr></tbody></table>
-      <table class="gates-mini"><caption><span class="gates-sym" data-gate="OR"></span>OR</caption>
-        <thead><tr><th>A</th><th>B</th><th>out</th></tr></thead>
-        <tbody><tr><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>1</td></tr><tr><td>1</td><td>0</td><td>1</td></tr><tr><td>1</td><td>1</td><td>1</td></tr></tbody></table>
-      <table class="gates-mini"><caption><span class="gates-sym" data-gate="NOR"></span>NOR</caption>
-        <thead><tr><th>A</th><th>B</th><th>out</th></tr></thead>
-        <tbody><tr><td>0</td><td>0</td><td>1</td></tr><tr><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>0</td></tr></tbody></table>
-      <table class="gates-mini"><caption><span class="gates-sym" data-gate="XOR"></span>XOR</caption>
-        <thead><tr><th>A</th><th>B</th><th>out</th></tr></thead>
-        <tbody><tr><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>1</td></tr><tr><td>1</td><td>0</td><td>1</td></tr><tr><td>1</td><td>1</td><td>0</td></tr></tbody></table>
-      <table class="gates-mini"><caption><span class="gates-sym" data-gate="XNOR"></span>XNOR</caption>
-        <thead><tr><th>A</th><th>B</th><th>out</th></tr></thead>
-        <tbody><tr><td>0</td><td>0</td><td>1</td></tr><tr><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>1</td></tr></tbody></table>
+
+      <div class="gates-gatecard">
+        <span class="gates-sym" data-gate="AND"></span>
+        <p class="gates-gatename">AND &mdash; <span class="gates-eq">Q = AB</span></p>
+        <p class="gates-gatedesc">Outputs 1 only when <em>both</em> inputs are 1 — like two switches
+        in series: both must be on for current to flow. A single 0 anywhere forces the output to 0.</p>
+        <table class="gates-mini">
+          <thead><tr><th>A</th><th>B</th><th>out</th></tr></thead>
+          <tbody><tr><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>1</td></tr></tbody></table>
+      </div>
+
+      <div class="gates-gatecard">
+        <span class="gates-sym" data-gate="OR"></span>
+        <p class="gates-gatename">OR &mdash; <span class="gates-eq">Q = A + B</span></p>
+        <p class="gates-gatedesc">Outputs 1 when <em>at least one</em> input is 1 — switches in
+        parallel: either one turning on is enough. The only way to get 0 is both inputs 0.</p>
+        <table class="gates-mini">
+          <thead><tr><th>A</th><th>B</th><th>out</th></tr></thead>
+          <tbody><tr><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>1</td></tr><tr><td>1</td><td>0</td><td>1</td></tr><tr><td>1</td><td>1</td><td>1</td></tr></tbody></table>
+      </div>
+
+      <div class="gates-gatecard">
+        <span class="gates-sym" data-gate="NAND"></span>
+        <p class="gates-gatename">NAND &mdash; <span class="gates-eq">Q = <span class="gates-ov">AB</span></span></p>
+        <p class="gates-gatedesc">AND followed by NOT — take the AND answer and flip it. Output is 0
+        <em>only</em> when both inputs are 1; every other combination gives 1.</p>
+        <table class="gates-mini">
+          <thead><tr><th>A</th><th>B</th><th>out</th></tr></thead>
+          <tbody><tr><td>0</td><td>0</td><td>1</td></tr><tr><td>0</td><td>1</td><td>1</td></tr><tr><td>1</td><td>0</td><td>1</td></tr><tr><td>1</td><td>1</td><td>0</td></tr></tbody></table>
+      </div>
+
+      <div class="gates-gatecard">
+        <span class="gates-sym" data-gate="NOR"></span>
+        <p class="gates-gatename">NOR &mdash; <span class="gates-eq">Q = <span class="gates-ov">A + B</span></span></p>
+        <p class="gates-gatedesc">OR followed by NOT — take the OR answer and flip it. Output is 1
+        <em>only</em> when both inputs are 0; any 1 anywhere forces the output to 0.</p>
+        <table class="gates-mini">
+          <thead><tr><th>A</th><th>B</th><th>out</th></tr></thead>
+          <tbody><tr><td>0</td><td>0</td><td>1</td></tr><tr><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>0</td></tr></tbody></table>
+      </div>
+
+      <div class="gates-gatecard">
+        <span class="gates-sym" data-gate="XOR"></span>
+        <p class="gates-gatename">XOR &mdash; <span class="gates-eq">Q = A &oplus; B</span></p>
+        <p class="gates-gatedesc">Exclusive OR — outputs 1 when the inputs <em>differ</em>, 0 when
+        they match. Think "one or the other, but not both."</p>
+        <table class="gates-mini">
+          <thead><tr><th>A</th><th>B</th><th>out</th></tr></thead>
+          <tbody><tr><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>1</td></tr><tr><td>1</td><td>0</td><td>1</td></tr><tr><td>1</td><td>1</td><td>0</td></tr></tbody></table>
+      </div>
+
+      <div class="gates-gatecard">
+        <span class="gates-sym" data-gate="XNOR"></span>
+        <p class="gates-gatename">XNOR &mdash; <span class="gates-eq">Q = <span class="gates-ov">A &oplus; B</span></span></p>
+        <p class="gates-gatedesc">XOR flipped — outputs 1 when the inputs <em>match</em> (both 0 or
+        both 1), 0 when they differ. It answers the question "are A and B equal?"</p>
+        <table class="gates-mini">
+          <thead><tr><th>A</th><th>B</th><th>out</th></tr></thead>
+          <tbody><tr><td>0</td><td>0</td><td>1</td></tr><tr><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>1</td></tr></tbody></table>
+      </div>
+
     </div>
   </div>
 </div>

@@ -78,19 +78,37 @@ def enumerate_classes():
     return classes
 
 
-def pick_representatives(classes):
-    """Choose one drawing per class: fewest NOTs, tie-broken to level gate usage.
+# Target share of all gate slots per gate type. Representative picking steers
+# toward these; the final #4 gate is fixed by each class's identity, so the
+# achieved mix is best-effort, not exact.
+GATE_WEIGHTS = {"AND": 20.0, "OR": 20.0, "NAND": 17.5, "NOR": 17.5, "XOR": 15.0, "XNOR": 10.0}
 
-    An alphabetical tiebreak hands every tie to AND and NAND, leaving OR and NOR badly
-    under-represented. Iterating scarcest-class-first keeps this deterministic while
-    letting constrained classes choose before common ones consume the quota.
+
+# How much one NOT bubble "costs" against the weight score. Higher = cleaner
+# drawings but a distribution further from GATE_WEIGHTS. 0.2 lands XNOR at
+# 10.8% (target 10) with a 45/127/28 NOT histogram; the residual XOR/XNOR
+# overshoot is structural — the final #4 gate is fixed per class, and only
+# XOR/XNOR gates can realize an xor-family branch function.
+NOT_PENALTY = 0.2
+
+
+def pick_representatives(classes):
+    """Choose one drawing per class, steering gate usage toward GATE_WEIGHTS.
+
+    Each candidate is scored by how "expensive" its gates are relative to their
+    target share so far (usage normalized by weight), plus a small penalty per
+    NOT bubble. Picking the cheapest keeps heavy-weight gates (AND/OR) common
+    and light ones (XNOR) rare while still preferring clean drawings.
+    Iterating scarcest-class-first keeps this deterministic while letting
+    constrained classes choose before common ones consume the quota.
     """
     usage, out = Counter(), []
     for key in sorted(classes, key=lambda k: (len(classes[k]), k)):
-        drawings = classes[key]
-        fewest = min(sum(dr["nots"]) for dr in drawings)
-        pool = [dr for dr in drawings if sum(dr["nots"]) == fewest]
-        pick = min(pool, key=lambda dr: (sum(usage[g] for g in dr["gates"]), dr["gates"]))
+        pool = classes[key]
+        pick = min(pool, key=lambda dr: (
+            sum((usage[g] + 1) / GATE_WEIGHTS[g] for g in dr["gates"])
+            + NOT_PENALTY * sum(dr["nots"]),
+            sum(dr["nots"]), dr["gates"]))
         usage.update(pick["gates"])
         out.append(pick)
     return out
