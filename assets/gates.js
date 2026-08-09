@@ -19,7 +19,6 @@
   if (!DATA) return;
 
   var STORE_KEY = 'gates.v4';
-  var SCRATCH_TOGGLE_KEY = 'gates.hideScratch'; // UI pref only, outside the game schema
   var SITE_URL = 'https://www.nathanhattrup.com/gates';
   var MAX_LIVES = 3;
   var HISTORY_LIMIT = 400;
@@ -246,7 +245,7 @@
 
   var els = {};
   ['day', 'banner', 'circuit', 'table', 'tbody', 'lives', 'msg', 'submit',
-   'share', 'streak', 'archive', 'archiveDate', 'backToday', 'scratchToggle',
+   'share', 'streak', 'archive', 'archiveDate', 'backToday',
    'help', 'modal', 'modalClose', 'app'].forEach(function (id) {
     els[id] = document.getElementById('gates-' + id.replace(/[A-Z]/g, function (m) { return '-' + m.toLowerCase(); }));
   });
@@ -498,20 +497,6 @@
     });
   }
 
-  /* ---------- scratch column toggle (spec §10) ---------- */
-
-  function initScratchToggle() {
-    var hidden = false;
-    try { hidden = localStorage.getItem(SCRATCH_TOGGLE_KEY) === '1'; } catch (e) {}
-    els.scratchToggle.checked = !hidden;
-    els.table.classList.toggle('hide-scratch', hidden);
-    els.scratchToggle.addEventListener('change', function () {
-      var hide = !els.scratchToggle.checked;
-      els.table.classList.toggle('hide-scratch', hide);
-      try { localStorage.setItem(SCRATCH_TOGGLE_KEY, hide ? '1' : '0'); } catch (e) {}
-    });
-  }
-
   /* ---------- tutorial modal ---------- */
 
   function openModal() {
@@ -593,7 +578,6 @@
   }
 
   function init() {
-    initScratchToggle();
     initModal();
 
     var params = new URLSearchParams(location.search);

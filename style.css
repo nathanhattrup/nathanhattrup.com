@@ -2109,19 +2109,6 @@ table.liftresults .att-miss {
   font-weight: 700;
   opacity: 1;
 }
-/* Hide-scratch toggle drops the C and D columns (they carry no scored state) */
-.gates-table.hide-scratch th:nth-child(3),
-.gates-table.hide-scratch th:nth-child(4),
-.gates-table.hide-scratch td:nth-child(3),
-.gates-table.hide-scratch td:nth-child(4) {
-  display: none;
-}
-
-.gates-controls {
-  font-size: 0.9rem;
-  text-align: center;
-}
-
 .gates-lives {
   text-align: center;
   font-size: 0.95rem;
@@ -2174,7 +2161,6 @@ table.liftresults .att-miss {
 
 /* Pre-launch: banner only, game hidden until Preview is pressed */
 .gates-prelaunch .gates-circuit,
-.gates-prelaunch .gates-controls,
 .gates-prelaunch .gates-table,
 .gates-prelaunch .gates-lives,
 .gates-prelaunch .gates-msg,
@@ -2267,8 +2253,7 @@ table.liftresults .att-miss {
 @media print {
   .gates-modal,
   .gates-actions,
-  .gates-archive,
-  .gates-controls {
+  .gates-archive {
     display: none;
   }
 }
