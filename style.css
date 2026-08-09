@@ -2037,9 +2037,15 @@ table.liftresults .att-miss {
 .gates-symsvg {
   display: block;
   margin: 0 auto 0.15rem;
-  width: 3.4rem;
+  width: 4.2rem;
   height: auto;
   color: var(--body-color);
+}
+.gates-symsvg .symlabel {
+  fill: currentColor;
+  stroke: none;
+  font-style: italic;
+  font-size: 13px;
 }
 .gates-symsvg path,
 .gates-symsvg line {

@@ -10,7 +10,7 @@
   <link rel="icon" href="images/favicon/favicon-32.png" type="image/png" sizes="32x32">
   <link rel="apple-touch-icon" href="images/favicon/apple-touch-icon.png">
   <link rel="canonical" href="https://www.nathanhattrup.com/gates" />
-  <meta name="description" content="Gates — a daily logic-gate puzzle. Read the circuit, fill in the truth table, three tries.">
+  <meta name="description" content="Gates, a daily logic-gate puzzle">
 </head>
 
 <body class="has-sidebar">
@@ -39,15 +39,19 @@
 	<h1>Gates</h1>
 </header>
 
+<div class="abstract">
+  <p>The daily logic gates game!</p>
+</div>
+
 <main>
 <article>
 
 <p class="gates-meta">
   <span id="gates-day"></span>
-  <button type="button" class="gates-btn" id="gates-help">How&nbsp;to&nbsp;play</button>
+  <button type="button" class="gates-btn" id="gates-help">How&nbsp;To&nbsp;Play</button>
 </p>
 
-<noscript><p>Gates needs JavaScript — the whole game runs in your browser, nothing is sent anywhere.</p></noscript>
+<noscript><p>Gates needs JavaScript. Everything runs in your browser.</p></noscript>
 
 <div id="gates-app">
   <p id="gates-banner" class="gates-banner" hidden></p>
@@ -59,8 +63,8 @@
       <tr>
         <th scope="col">A</th>
         <th scope="col">B</th>
-        <th scope="col">C <span class="gates-colnote">scratch</span></th>
-        <th scope="col">D <span class="gates-colnote">scratch</span></th>
+        <th scope="col">C <span class="gates-colnote">optional</span></th>
+        <th scope="col">D <span class="gates-colnote">optional</span></th>
         <th scope="col">Q <span class="gates-colnote">answer</span></th>
       </tr>
     </thead>
@@ -72,7 +76,7 @@
 
   <p class="gates-actions">
     <button type="button" class="gates-btn" id="gates-submit">Submit</button>
-    <button type="button" class="gates-btn" id="gates-share" hidden>Share result</button>
+    <button type="button" class="gates-btn" id="gates-share" hidden>Share Result</button>
   </p>
 
   <p id="gates-streak" class="gates-streak"></p>
@@ -98,85 +102,74 @@
 <div class="gates-modal" id="gates-modal" role="dialog" aria-modal="true" aria-labelledby="gates-modal-title" hidden>
   <div class="gates-modal-box">
     <button type="button" class="gates-modal-close" id="gates-modal-close" aria-label="Close">&times;</button>
-    <h2 id="gates-modal-title">How to play</h2>
-    <p>Each day you get one circuit. Inputs <strong>A</strong> and <strong>B</strong> run through
-    two gates whose outputs are <strong>C</strong> and <strong>D</strong>, which feed a final gate
-    that produces <strong>Q</strong>. Work out what <strong>Q</strong> is for all four input
-    combinations and fill in the Q column — tap a cell to cycle empty&nbsp;&rarr;&nbsp;0&nbsp;&rarr;&nbsp;1.</p>
-    <p>Gates are drawn with their standard schematic symbols — each one is shown beside its
-    truth table below. A small circle (&#9675;) is a <strong>NOT bubble</strong>: on an input
-    wire it flips that input before it reaches the gate, and on a gate's tip it inverts the
-    output (that tip bubble is what turns AND, OR, and XOR into NAND, NOR, and XNOR).</p>
-    <p>The <strong>C</strong> and <strong>D</strong> columns are optional scratch paper for working
-    through the two middle wires. They are never checked and never affect your result.</p>
-    <p>You have <strong>three tries</strong>. A submission only tells you correct or not — no hints
-    about which rows are wrong. Only wrong answers cost a life: the winning submission is free, and
-    duplicate or incomplete submissions are rejected without spending anything.</p>
-    <p>When your day is done, <strong>Share result</strong> copies a spoiler-free summary to your
-    clipboard — the day number and one ✅ or ❌ per try — ready to paste anywhere.</p>
-    <h3>The six gates</h3>
-    <p>In the equations below, <strong>AB</strong> means A AND B (multiplication),
-    <strong>A&nbsp;+&nbsp;B</strong> means A OR B, a bar over an expression means NOT (flip it),
-    and <strong>&oplus;</strong> is exclusive-OR.</p>
+    <h2 id="gates-modal-title">How To Play</h2>
+    <p>Each day is a new circuit! Fill in the truth table for <b>Q</b> to submit. <b>C</b> and <b>D</b> are optional.
+      Click a cell to cycle: Empty&nbsp;&rarr;&nbsp;0&nbsp;&rarr;&nbsp;1.</p>
+
+    <h3>What is a logic gate??</h3>
+
+    <p>There's a lot of <a href="https://www.geeksforgeeks.org/digital-logic/logic-gates/" target="_blank">websites</a> that explain it better, so definitely check those out first.<br><br>
+    But essentially, everything has two distinct states: True/False, High/Low, <b>1/0</b>. These inputs then pass through <i>gates</i> that determine an output. <br><br>
+    In my opinion, I think the simplest to understand is the <b>NOT</b> gate, denoted by a circle, &#9675;. It has one input and one output. All it does is <i>flip</i> whatever comes in.
+    So a 1 becomes a 0, and a 0 becomes a 1. The equation would be <span class="gates-eq">Q = <span class="gates-ov">A</span></span> where <b>A</b> is the input and <b>Q</b> is the output. 
+    The bar over A just means its notted, or flipped. <br><br>
+    Below are all the different types of gates you'll encounter each with two inputs and one output:
+     
+    </p>
+
     <div class="gates-gate-ref">
 
       <div class="gates-gatecard">
         <span class="gates-sym" data-gate="AND"></span>
         <p class="gates-gatename">AND &mdash; <span class="gates-eq">Q = AB</span></p>
-        <p class="gates-gatedesc">Outputs 1 only when <em>both</em> inputs are 1 — like two switches
-        in series: both must be on for current to flow. A single 0 anywhere forces the output to 0.</p>
+        <p class="gates-gatedesc">Both inputs must be 1 for the output to be 1. 0 x 1 still equals 0. Only 1 x 1 = 1!</p>
         <table class="gates-mini">
-          <thead><tr><th>A</th><th>B</th><th>out</th></tr></thead>
+          <thead><tr><th>A</th><th>B</th><th>Q</th></tr></thead>
           <tbody><tr><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>1</td></tr></tbody></table>
       </div>
 
       <div class="gates-gatecard">
         <span class="gates-sym" data-gate="OR"></span>
         <p class="gates-gatename">OR &mdash; <span class="gates-eq">Q = A + B</span></p>
-        <p class="gates-gatedesc">Outputs 1 when <em>at least one</em> input is 1 — switches in
-        parallel: either one turning on is enough. The only way to get 0 is both inputs 0.</p>
+        <p class="gates-gatedesc">At least one input must be 1 for the output to be 1. 0 + 1 still equals 1!</p>
         <table class="gates-mini">
-          <thead><tr><th>A</th><th>B</th><th>out</th></tr></thead>
+          <thead><tr><th>A</th><th>B</th><th>Q</th></tr></thead>
           <tbody><tr><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>1</td></tr><tr><td>1</td><td>0</td><td>1</td></tr><tr><td>1</td><td>1</td><td>1</td></tr></tbody></table>
       </div>
 
       <div class="gates-gatecard">
         <span class="gates-sym" data-gate="NAND"></span>
         <p class="gates-gatename">NAND &mdash; <span class="gates-eq">Q = <span class="gates-ov">AB</span></span></p>
-        <p class="gates-gatedesc">AND followed by NOT — take the AND answer and flip it. Output is 0
-        <em>only</em> when both inputs are 1; every other combination gives 1.</p>
+        <p class="gates-gatedesc">This is just an AND gate followed by a NOT gate, so take the answer for an AND gate and flip it!</p>
         <table class="gates-mini">
-          <thead><tr><th>A</th><th>B</th><th>out</th></tr></thead>
+          <thead><tr><th>A</th><th>B</th><th>Q</th></tr></thead>
           <tbody><tr><td>0</td><td>0</td><td>1</td></tr><tr><td>0</td><td>1</td><td>1</td></tr><tr><td>1</td><td>0</td><td>1</td></tr><tr><td>1</td><td>1</td><td>0</td></tr></tbody></table>
       </div>
 
       <div class="gates-gatecard">
         <span class="gates-sym" data-gate="NOR"></span>
         <p class="gates-gatename">NOR &mdash; <span class="gates-eq">Q = <span class="gates-ov">A + B</span></span></p>
-        <p class="gates-gatedesc">OR followed by NOT — take the OR answer and flip it. Output is 1
-        <em>only</em> when both inputs are 0; any 1 anywhere forces the output to 0.</p>
+        <p class="gates-gatedesc">This is just an OR gate followed by a NOT gate, so take the answer for an OR gate and flip it!</p>
         <table class="gates-mini">
-          <thead><tr><th>A</th><th>B</th><th>out</th></tr></thead>
+          <thead><tr><th>A</th><th>B</th><th>Q</th></tr></thead>
           <tbody><tr><td>0</td><td>0</td><td>1</td></tr><tr><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>0</td></tr></tbody></table>
       </div>
 
       <div class="gates-gatecard">
         <span class="gates-sym" data-gate="XOR"></span>
         <p class="gates-gatename">XOR &mdash; <span class="gates-eq">Q = A &oplus; B</span></p>
-        <p class="gates-gatedesc">Exclusive OR — outputs 1 when the inputs <em>differ</em>, 0 when
-        they match. Think "one or the other, but not both."</p>
+        <p class="gates-gatedesc">Exclusive OR. The inputs must be different for the output to be 1.</p>
         <table class="gates-mini">
-          <thead><tr><th>A</th><th>B</th><th>out</th></tr></thead>
+          <thead><tr><th>A</th><th>B</th><th>Q</th></tr></thead>
           <tbody><tr><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>1</td></tr><tr><td>1</td><td>0</td><td>1</td></tr><tr><td>1</td><td>1</td><td>0</td></tr></tbody></table>
       </div>
 
       <div class="gates-gatecard">
         <span class="gates-sym" data-gate="XNOR"></span>
         <p class="gates-gatename">XNOR &mdash; <span class="gates-eq">Q = <span class="gates-ov">A &oplus; B</span></span></p>
-        <p class="gates-gatedesc">XOR flipped — outputs 1 when the inputs <em>match</em> (both 0 or
-        both 1), 0 when they differ. It answers the question "are A and B equal?"</p>
+        <p class="gates-gatedesc">This is just an XOR gate followed by a NOT gate. So the inputs must be the same for the output to be 1.</p>
         <table class="gates-mini">
-          <thead><tr><th>A</th><th>B</th><th>out</th></tr></thead>
+          <thead><tr><th>A</th><th>B</th><th>Q</th></tr></thead>
           <tbody><tr><td>0</td><td>0</td><td>1</td></tr><tr><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>1</td></tr></tbody></table>
       </div>
 

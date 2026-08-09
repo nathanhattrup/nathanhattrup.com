@@ -30,18 +30,18 @@
      (Tutorial/how-to-play text lives as plain HTML in gates.html.)
      ============================================================ */
   var STRINGS = {
-    header: 'No. {n} · {date}',                 // daily title line
+    header: 'No. {n}',                          // daily title line
     headerArchiveSuffix: ' · archive',          // appended when replaying a past day
-    archiveBanner: 'Archive play — counts in your history, never toward your streak.',
+    archiveBanner: 'Play past circuits.',
     livesLabel: 'Lives',
-    incomplete: 'Fill in all four Q cells to submit — C and D are optional scratch.',
-    duplicate: 'You already tried that Q column — no life spent.',
-    wrong: 'Not it. {lives} left.',             // {lives} becomes "2 lives" / "1 life"
+    incomplete: 'Fill in Q to submit, C and D are optional',
+    duplicate: 'You already tried that..',
+    wrong: 'Wrong.. {lives} left.',             // {lives} becomes "2 lives" / "1 life"
     win: 'Correct! Solved in {tries}.',         // {tries} becomes "1 try" / "2 tries"
-    loss: 'Out of lives. The correct table is shown — trace C and D through the circuit to see why.',
-    resolvedWin: 'Solved — {icons}. Come back tomorrow for the next one.',
-    resolvedLoss: 'Missed — {icons}. Come back tomorrow for the next one.',
-    welcomeBack: 'Welcome back — {lives} left.',
+    loss: 'Out of lives. The correct truth table is shown. Try and figure out why!',
+    resolvedWin: 'Solved {icons}, come back tomorrow!',
+    resolvedLoss: 'Missed {icons}, come back tomorrow!',
+    welcomeBack: 'Welcome back! {lives} left.',
     streakLine: 'Streak {n} · best {m}',
     copied: 'Copied ✓',
     copyFailed: 'Copy failed'
@@ -512,16 +512,21 @@
       if (e.key === 'Escape' && !els.modal.hidden) closeModal();
     });
     if (!store.tutorialSeen) openModal();
-    // Draw each gate's schematic symbol next to its truth table, with short
-    // input/output stubs so it reads like a schematic fragment.
+    // Draw each gate's schematic symbol next to its truth table, with
+    // labelled A/B input stubs and a Q output stub so it reads exactly
+    // like a fragment of the daily circuit.
     document.querySelectorAll('.gates-sym').forEach(function (span) {
       var type = span.dataset.gate;
-      var g = gateMarkup(type, 10, 24);
-      span.innerHTML = '<svg class="gates-symsvg" viewBox="0 0 88 48" aria-hidden="true">' +
-        '<line x1="0" y1="10" x2="' + (10 + GATE_SHAPES[GATE_BASE[type]].inset) + '" y2="10"/>' +
-        '<line x1="0" y1="38" x2="' + (10 + GATE_SHAPES[GATE_BASE[type]].inset) + '" y2="38"/>' +
+      var g = gateMarkup(type, 24, 24);
+      var inEnd = 24 + GATE_SHAPES[GATE_BASE[type]].inset;
+      span.innerHTML = '<svg class="gates-symsvg" viewBox="0 0 118 48" aria-hidden="true">' +
+        '<text class="symlabel" x="10" y="10" dy="0.35em" text-anchor="end">A</text>' +
+        '<text class="symlabel" x="10" y="38" dy="0.35em" text-anchor="end">B</text>' +
+        '<line x1="14" y1="10" x2="' + inEnd + '" y2="10"/>' +
+        '<line x1="14" y1="38" x2="' + inEnd + '" y2="38"/>' +
         g.svg +
-        '<line x1="' + g.outX + '" y1="24" x2="' + (g.outX + 10) + '" y2="24"/></svg>';
+        '<line x1="' + g.outX + '" y1="24" x2="' + (g.outX + 10) + '" y2="24"/>' +
+        '<text class="symlabel" x="' + (g.outX + 14) + '" y="24" dy="0.35em">Q</text></svg>';
     });
   }
 
