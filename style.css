@@ -127,6 +127,20 @@
    value here and it propagates across the whole stylesheet.
    ============================================================ */
 :root {
+  /* --- prism.css token palette, mirrored so pages that don't load
+     prism/prism.css (gates.html) still get them. Identical values.
+     Used for the lifting charts and the gantt bars only. --- */
+  --token-teal: #407f80;
+  --token-black: #000000;
+  --token-grey: #666666;
+  --token-green: #007f00;
+  --token-lime: #7d8f29;
+  --token-brown: #9a6e3a;
+  --token-red: #ba2121;
+  --token-fuchsia: #dd4a68;
+  --token-orange: #e90;
+  --token-pink: #BA6687;
+
   --body-color: hsl(0, 5%, 10%);             /* main text color (near-black) */
   --body-bg-color: hsl(210, 20%, 98%);       /* page background (off-white) */
   --link-visited: hsl(0, 100%, 33%);         /* link/visited link color (dark red) */
@@ -147,17 +161,35 @@
   \parindent =~ 17.625 * (72 / 72.27) / 12 = 1.463rem. */
   /* Lifting chart series colors (lifting.html; per-mode variants below,
      validated for lightness/chroma/contrast against each surface) */
-  --chart-squat: #be8c00;
-  --chart-bench: #6f7d00;
-  --chart-deadlift: #b93332;
-  --chart-total: #1f5aa6;
-  --chart-dots: #1f5aa6;
+  --chart-squat: var(--token-orange);
+  --chart-bench: var(--token-lime);
+  --chart-deadlift: var(--token-red);
+  --chart-total: var(--token-fuchsia);
+  --chart-dots: var(--token-teal);
   --chart-grid: hsl(210, 12%, 89%);          /* hairline gridlines, one step off surface */
-  --chart-muted: hsl(0, 0%, 40%);            /* axis text, event markers */
+  --chart-muted: var(--token-grey);          /* axis text, event markers */
+  /* Gantt timeline bars (courses.html) — all derived from --token-red:
+     done = mostly ink with a red cast (near-gray, reads as settled),
+     current = the token itself, planned = red mixed toward the surface.
+     Adapts to either theme since the ink/surface halves flip. */
+  --gantt-done: color-mix(in srgb, var(--token-red) 26%, var(--body-color));
+  --gantt-current: var(--token-red);
+  --gantt-plan: color-mix(in srgb, var(--token-red) 11%, var(--body-bg-color));
+  --gantt-plan-stripe: color-mix(in srgb, var(--token-red) 22%, var(--body-bg-color));
 }
 
 /* Manual dark-mode override: add class="latex-dark" to <body> */
 .latex-dark {
+  --token-teal: #90D0D0;
+  --token-black: #ccc;
+  --token-grey: #999;
+  --token-green: #51B53F;
+  --token-lime: #B4C55D;
+  --token-brown: #D3A26B;
+  --token-red: #FA5E4F;
+  --token-fuchsia: #FF839B;
+  --token-orange: #FFCF4C;
+  --token-pink: #F49BBC;
   --body-color: hsl(0, 0%, 86%);
   --body-bg-color: hsl(0, 0%, 16%);
   --link-visited: hsl(196 80% 77%);
@@ -169,18 +201,32 @@
   --sidenote-target-border-color: hsl(0, 0%, 59%);
   --footnotes-border-color: hsl(0, 0%, 59%);
   --proof-symbol-filter: invert(80%); /* invert the proof end-of-proof glyph for dark bg */
-  --chart-squat: #c18500;
-  --chart-bench: #8a9a00;
-  --chart-deadlift: #cf4e48;
-  --chart-total: #3d7cc9;
-  --chart-dots: #3d7cc9;
+  --chart-squat: var(--token-orange);
+  --chart-bench: var(--token-lime);
+  --chart-deadlift: var(--token-red);
+  --chart-total: var(--token-fuchsia);
+  --chart-dots: var(--token-teal);
   --chart-grid: hsl(0, 0%, 24%);
-  --chart-muted: hsl(0, 0%, 62%);
+  --chart-muted: var(--token-grey);
+  --gantt-done: color-mix(in srgb, var(--token-red) 26%, var(--body-color));
+  --gantt-current: var(--token-red);
+  --gantt-plan: color-mix(in srgb, var(--token-red) 11%, var(--body-bg-color));
+  --gantt-plan-stripe: color-mix(in srgb, var(--token-red) 22%, var(--body-bg-color));
 }
 
 /* Auto dark-mode: triggers when OS prefers dark AND class="latex-dark-auto" is set */
 @media (prefers-color-scheme: dark) {
    .latex-dark-auto {
+    --token-teal: #90D0D0;
+    --token-black: #ccc;
+    --token-grey: #999;
+    --token-green: #51B53F;
+    --token-lime: #B4C55D;
+    --token-brown: #D3A26B;
+    --token-red: #FA5E4F;
+    --token-fuchsia: #FF839B;
+    --token-orange: #FFCF4C;
+    --token-pink: #F49BBC;
     --body-color: hsl(0, 0%, 86%);
     --body-bg-color: hsl(0, 0%, 16%);
     --link-visited: hsl(196 80% 77%);
@@ -192,13 +238,17 @@
     --sidenote-target-border-color: hsl(0, 0%, 59%);
     --footnotes-border-color: hsl(0, 0%, 59%);
     --proof-symbol-filter: invert(80%);
-    --chart-squat: #c18500;
-    --chart-bench: #8a9a00;
-    --chart-deadlift: #cf4e48;
-    --chart-total: #3d7cc9;
-    --chart-dots: #3d7cc9;
+    --chart-squat: var(--token-orange);
+    --chart-bench: var(--token-lime);
+    --chart-deadlift: var(--token-red);
+    --chart-total: var(--token-fuchsia);
+    --chart-dots: var(--token-teal);
     --chart-grid: hsl(0, 0%, 24%);
-    --chart-muted: hsl(0, 0%, 62%);
+    --chart-muted: var(--token-grey);
+    --gantt-done: color-mix(in srgb, var(--token-red) 26%, var(--body-color));
+    --gantt-current: var(--token-red);
+    --gantt-plan: color-mix(in srgb, var(--token-red) 11%, var(--body-bg-color));
+    --gantt-plan-stripe: color-mix(in srgb, var(--token-red) 22%, var(--body-bg-color));
   }
 }
 
@@ -1299,6 +1349,14 @@ table.gantt {
   table-layout: fixed;       /* equal-width columns */
   border-top: var(--border-width-thick) solid var(--table-border-color);
   border-bottom: var(--border-width-thick) solid var(--table-border-color);
+  /* Single continuous stripe layer for planned blocks, anchored to the table
+     box (not each cell) so the diagonals line up across every cell edge.
+     Cells below paint over it; .bar-plan goes transparent to reveal it. */
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--gantt-plan) 0 6px,
+    var(--gantt-plan-stripe) 6px 12px
+  );
 }
 
 table.gantt th,
@@ -1307,6 +1365,7 @@ table.gantt td {
   padding: 0;
   text-align: center;
   height: 2.4rem;
+  background: var(--body-bg-color);   /* masks the table's stripe layer */
 }
 
 table.gantt thead th {
@@ -1327,10 +1386,14 @@ table.gantt .gantt-label {
   white-space: nowrap;
 }
 
-/* Bar fills — completed (dark), planned (light), current (muted green) */
-table.gantt .bar-done    { background: #404040; }
-table.gantt .bar-plan    { background: hsl(0, 0%, 88%); }
-table.gantt .bar-current { background: hsl(90, 15%, 70%); }
+/* Bar fills — theme-aware vars (see :root / .latex-dark), all mixed from
+   --token-red: done reads as near-gray ink, current as the live token,
+   planned as a faint striped tint so it stays distinguishable without
+   relying on color. Planned is transparent on purpose — the stripes come
+   from the table's own background layer so they run continuously. */
+table.gantt .bar-done    { background: var(--gantt-done); }
+table.gantt .bar-current { background: var(--gantt-current); }
+table.gantt .bar-plan    { background: transparent; }
 
 /* Smaller font on phones */
 @media (max-width: 640px) {
