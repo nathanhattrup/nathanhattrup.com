@@ -2041,6 +2041,16 @@ table.liftresults .att-miss {
 #gates-day {
   font-style: italic;
 }
+/* Elapsed play time; paused while the tutorial is open or the page is
+   hidden/unfocused (see the timer block in assets/gates.js) */
+.gates-timer {
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.75;
+}
+.gates-timer.paused {
+  opacity: 0.4;
+}
 
 /* Small bordered action button, LaTeX-flavored */
 .gates-btn {

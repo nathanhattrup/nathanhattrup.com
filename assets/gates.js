@@ -43,6 +43,7 @@
     resolvedLoss: 'Missed {icons}, come back tomorrow!',
     welcomeBack: 'Welcome back! {lives} left.',
     streakLine: 'Streak {n} · best {m}',
+    shareTime: '⏱ {time}',                      // time line in the share string
     copied: 'Copied ✓',
     copyFailed: 'Copy failed'
   };
@@ -121,10 +122,16 @@
   // `attempts` is an array of booleans, oldest first, the final entry true
   // on a win. `dayNum` is the unwrapped day count — NOT the puzzle id,
   // which repeats every 200 days. C/D scratch is deliberately absent.
-  function shareString(dayNum, attempts, isArchive, dateStr) {
+  // `ms` is the elapsed play time; omitted when unknown (a day resolved
+  // before the timer existed carries no time).
+  function shareString(dayNum, attempts, isArchive, dateStr, ms) {
     var grid = attempts.map(function (ok) { return ok ? '✅' : '❌'; }).join('');
     var label = isArchive ? 'Gates #' + dayNum + ' (' + dateStr + ')' : 'Gates #' + dayNum;
-    return label + '\n' + grid;
+    var out = label + '\n' + grid;
+    if (typeof ms === 'number' && isFinite(ms)) {
+      out += '\n' + fmt(STRINGS.shareTime, { time: formatTime(ms) });
+    }
+    return out;
   }
 
   function copyText(text, done) {
@@ -239,7 +246,7 @@
      ============================================================ */
 
   var els = {};
-  ['day', 'banner', 'circuit', 'table', 'tbody', 'lives', 'msg', 'submit',
+  ['day', 'timer', 'banner', 'circuit', 'table', 'tbody', 'lives', 'msg', 'submit',
    'share', 'streak', 'archive', 'archiveCal', 'backToday',
    'help', 'modal', 'modalClose', 'app'].forEach(function (id) {
     els[id] = document.getElementById('gates-' + id.replace(/[A-Z]/g, function (m) { return '-' + m.toLowerCase(); }));
@@ -265,8 +272,80 @@
       tried: [],      // Q columns already submitted, for duplicate rejection
       attempts: [],   // one bool per valid submission, oldest first
       resolved: false,
-      won: false
+      won: false,
+      ms: null        // elapsed play time, set once the day resolves
     };
+  }
+
+  /* ============================================================
+     Timer — elapsed play time, whole seconds.
+     Runs only while the puzzle is actually in front of the player:
+     paused by the tutorial modal, a hidden tab and an unfocused window,
+     so idle time never inflates the number. Elapsed time accumulates
+     from wall-clock deltas, not tick counts, so a throttled interval
+     can't drift. Persisted with the scratch, so a refresh resumes.
+     ============================================================ */
+
+  var timer = { base: 0, startedAt: null, id: null, persisted: 0 };
+
+  function timerElapsed() {
+    return timer.base + (timer.startedAt === null ? 0 : Date.now() - timer.startedAt);
+  }
+
+  function formatTime(ms) {
+    var t = Math.floor(ms / 1000);
+    var pad = function (n) { return String(n).padStart(2, '0'); };
+    var h = Math.floor(t / 3600), m = Math.floor(t / 60) % 60, s = t % 60;
+    return h ? h + ':' + pad(m) + ':' + pad(s) : m + ':' + pad(s);
+  }
+
+  function renderTimer() {
+    if (!els.timer) return;
+    var ms = !game ? null : (game.resolved ? game.ms : timerElapsed());
+    els.timer.textContent = (ms === null) ? '' : formatTime(ms);
+    els.timer.classList.toggle('paused', !!game && !game.resolved && timer.startedAt === null);
+  }
+
+  function timerRunnable() {
+    return !!game && !game.resolved && els.modal.hidden &&
+      !document.hidden && document.hasFocus();
+  }
+
+  function timerStart() {
+    if (timer.startedAt !== null) return;
+    timer.startedAt = Date.now();
+    timer.persisted = Date.now();
+    timer.id = setInterval(timerTick, 250); // 250ms so the second flips promptly
+    renderTimer();
+  }
+
+  function timerStop() {
+    if (timer.startedAt === null) { renderTimer(); return; }
+    timer.base = timerElapsed();
+    timer.startedAt = null;
+    clearInterval(timer.id);
+    timer.id = null;
+    renderTimer();
+    saveScratch();
+  }
+
+  // Periodic write so a tab killed without firing pagehide loses at most
+  // ten seconds of the clock.
+  function timerTick() {
+    renderTimer();
+    if (Date.now() - timer.persisted > 10000) {
+      timer.persisted = Date.now();
+      saveScratch();
+    }
+  }
+
+  function timerSync() {
+    if (timerRunnable()) timerStart(); else timerStop();
+  }
+
+  function timerReset() {
+    if (timer.id) clearInterval(timer.id);
+    timer = { base: 0, startedAt: null, id: null, persisted: 0 };
   }
 
   /* ---------- scratch persistence (spec §6.3): today's daily only ---------- */
@@ -276,7 +355,8 @@
     store.scratch = {
       date: game.dateStr,
       c: game.c.slice(), d: game.d.slice(), q: game.q.slice(),
-      tried: game.tried.map(function (t) { return t.slice(); })
+      tried: game.tried.map(function (t) { return t.slice(); }),
+      ms: timerElapsed()
     };
     saveStore(store);
   }
@@ -298,6 +378,7 @@
       // A stored tried entry is by definition a spent (wrong) attempt
       game.attempts = game.tried.map(function () { return false; });
     }
+    if (typeof sc.ms === 'number' && isFinite(sc.ms) && sc.ms >= 0) timer.base = sc.ms;
   }
 
   /* ---------- rendering ---------- */
@@ -397,7 +478,7 @@
   }
 
   function recordResolution() {
-    var entry = { attempts: game.attempts.slice(), archive: game.mode === 'archive' };
+    var entry = { attempts: game.attempts.slice(), archive: game.mode === 'archive', ms: game.ms };
     store.history[game.dateStr] = entry;
     if (game.mode === 'daily') {
       // Streak: increment only when lastPlayed is exactly the previous
@@ -415,6 +496,9 @@
   function finish(won) {
     game.resolved = true;
     game.won = won;
+    timerStop();          // clock stops on the resolving submission
+    game.ms = timer.base;
+    renderTimer();
     recordResolution();
     reveal();
     renderLives();
@@ -468,6 +552,8 @@
     game.resolved = true;
     game.attempts = entry.attempts.slice();
     game.won = entry.attempts[entry.attempts.length - 1] === true;
+    game.ms = (typeof entry.ms === 'number' && isFinite(entry.ms)) ? entry.ms : null;
+    renderTimer();
     reveal();
     renderLives();
     renderStreak();
@@ -479,7 +565,7 @@
   /* ---------- share ---------- */
 
   function doShare() {
-    var text = shareString(game.dayNum, game.attempts, game.mode === 'archive', game.dateStr) +
+    var text = shareString(game.dayNum, game.attempts, game.mode === 'archive', game.dateStr, game.ms) +
       '\n\n' + SITE_URL;
     copyText(text, function (ok) {
       var old = els.share.textContent;
@@ -493,10 +579,12 @@
   function openModal() {
     els.modal.hidden = false;
     els.modalClose.focus();
+    timerSync();
   }
   function closeModal() {
     els.modal.hidden = true;
     els.help.focus();
+    timerSync();
     if (!store.tutorialSeen) {
       store.tutorialSeen = true;
       saveStore(store);
@@ -569,6 +657,7 @@
 
   function startGame(mode, dateStr) {
     game = newGame(mode, dateStr);
+    timerReset();
     renderHeader();
     els.circuit.innerHTML = circuitSVG(game.puzzle);
     renderTable();
@@ -590,10 +679,18 @@
     els.submit.hidden = game.resolved;
     els.submit.onclick = submit;
     els.share.onclick = doShare;
+    timerSync();
   }
 
   function init() {
     initModal();
+
+    // Pause the clock whenever the puzzle isn't in front of the player,
+    // and flush it before the page goes away.
+    document.addEventListener('visibilitychange', timerSync);
+    window.addEventListener('focus', timerSync);
+    window.addEventListener('blur', timerSync);
+    window.addEventListener('pagehide', timerStop);
 
     // Clock-skew guard: a device whose local date is somehow before the
     // epoch still gets the first puzzle rather than a negative day number.
