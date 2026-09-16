@@ -54,9 +54,10 @@ const BOOKS = [
   { slug: "the-big-leap",        title: "The Big Leap",           author: "Gay Hendricks",       read: "2026-06-01", format: "audio" },
   { slug: "junglekeeper",        title: "Junglekeeper",           author: "Paul Rosolie",        read: "2026-06-02", fav: true },
   { slug: "zero-to-one",         title: "Zero to One",            author: "Peter Thiel",         read: "2026-06-03", format: "audio" },
+  { slug: "never-finished",      title: "Never Finished",         author: "David Goggins",       read: "2026-08", format: "audio" },
 
   // --- Currently reading (no read date until finished) ---
   { slug: "live-no-lies",        title: "Live No Lies",           author: "John Mark Comer",     current: true },
   { slug: "uav-design",          title: "Small Unmanned Fixed-wing Aircraft Design: A Practical Approach", author: "Andrew J. Keane, András Sóbester, and James P. Scanlan", current: true, sortTitle: "Small Unmanned Fixed-wing Aircraft Design", sortAuthor: "Keane" },
-  { slug: "never-finished",      title: "Never Finished",         author: "David Goggins",       current: true, format: "audio" },
+  { slug: "napoleon",            title: "Napoleon: A Life",       author: "Andrew Roberts",     current: true,    format: "audio"},
 ];
