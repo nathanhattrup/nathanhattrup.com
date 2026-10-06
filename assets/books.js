@@ -55,9 +55,11 @@ const BOOKS = [
   { slug: "junglekeeper",        title: "Junglekeeper",           author: "Paul Rosolie",        read: "2026-06-02", fav: true },
   { slug: "zero-to-one",         title: "Zero to One",            author: "Peter Thiel",         read: "2026-06-03", format: "audio" },
   { slug: "never-finished",      title: "Never Finished",         author: "David Goggins",       read: "2026-08", format: "audio" },
-
+  { slug: "uav-design",          title: "Small Unmanned Fixed-wing Aircraft Design: A Practical Approach", author: "Andrew J. Keane, András Sóbester, and James P. Scanlan", read: "2026-10-05", sortTitle: "Small Unmanned Fixed-wing Aircraft Design", sortAuthor: "Keane" },
+  
   // --- Currently reading (no read date until finished) ---
   { slug: "live-no-lies",        title: "Live No Lies",           author: "John Mark Comer",     current: true },
-  { slug: "uav-design",          title: "Small Unmanned Fixed-wing Aircraft Design: A Practical Approach", author: "Andrew J. Keane, András Sóbester, and James P. Scanlan", current: true, sortTitle: "Small Unmanned Fixed-wing Aircraft Design", sortAuthor: "Keane" },
   { slug: "napoleon",            title: "Napoleon: A Life",       author: "Andrew Roberts",     current: true,    format: "audio"},
+  { slug: "power-electronics",   title: "Fundamentals of Power Electronics", author: "Robert Erickson and Dragan Maksimovic", sorthAuthor: "Erickson", current: true },
+  { slug: "nuclear-engineering", title: "Introduction to Nuclear Engineering", author: "John Lamarsh and Anthony Baratta", sorthAuthor: "Lamarsh", current: true },
 ];
