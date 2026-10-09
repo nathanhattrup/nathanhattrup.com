@@ -13,6 +13,12 @@ Options:
     --max-width INT   Maximum width in pixels (default: 1920)
     --dry-run         Show what would be compressed without actually doing it
     --verbose         Show detailed output for each image
+    --images-dir PATH Directory to scan recursively (default: images)
+    --file PATH ...   Compress only these exact file(s); skips the directory
+                      scan entirely. Use this instead of a full run when you
+                      add one photo, because compression is in-place and lossy
+                      (re-running a whole directory re-encodes files that were
+                      already compressed on an earlier run).
 
 Requirements:
     pip install Pillow pillow-heif
@@ -154,6 +160,57 @@ def find_images(directory):
     return sorted(images)
 
 
+def collect_single_files(paths):
+    """
+    Validate an explicit list of image paths (the --file flag).
+
+    This is the counterpart to find_images(): no directory walking, no
+    discovery. The caller already named every file to touch, so the only job
+    here is to confirm each path is usable before anything is overwritten.
+
+    Bad paths are fatal rather than skipped — a typo in --file should be loud,
+    not a silent no-op that leaves the image uncompressed.
+
+    Returns:
+        list[str]: the validated paths, in the order they were given
+    """
+    # Same extension gate find_images() applies, so --file and a directory
+    # scan accept exactly the same set of formats.
+    valid_extensions = SUPPORTED_EXTENSIONS.copy()
+    if HEIC_SUPPORTED:
+        valid_extensions.update(HEIC_EXTENSIONS)
+
+    validated = []
+
+    for path in paths:
+        # Catches both a missing path and a directory handed to --file.
+        if not os.path.isfile(path):
+            print(f"Error: File '{path}' not found (or is not a regular file).")
+            if os.path.isdir(path):
+                print("       That is a directory - use --images-dir instead.")
+            sys.exit(1)
+
+        suffix = Path(path).suffix
+
+        # HEIC asked for by name but pillow-heif missing: explain, do not skip.
+        # (The directory scan just omits HEIC in this case, which is fine there
+        # but would be confusing when the file was named explicitly.)
+        if suffix in HEIC_EXTENSIONS and not HEIC_SUPPORTED:
+            print(f"Error: '{path}' is HEIC/HEIF but HEIC support is not installed.")
+            print("       Install it with: pip install pillow-heif")
+            sys.exit(1)
+
+        # Anything else compress_image() has no save branch for.
+        if suffix not in valid_extensions:
+            print(f"Error: '{path}' has an unsupported extension '{suffix}'.")
+            print(f"       Supported: {', '.join(sorted(valid_extensions))}")
+            sys.exit(1)
+
+        validated.append(path)
+
+    return validated
+
+
 def main():
     parser = argparse.ArgumentParser(
         description='Compress images in the images/ folder while preserving paths and names.',
@@ -165,6 +222,10 @@ Examples:
     python compress_images.py --max-width 1200   # Resize large images
     python compress_images.py --dry-run          # Preview without changes
     python compress_images.py --verbose          # Detailed output
+
+    # Single file (skips the directory scan, leaves every other image alone):
+    python compress_images.py --file images/grad.jpeg --verbose
+    python compress_images.py --file images/a.jpg images/japan/b.jpg
         """
     )
     parser.add_argument('--quality', type=int, default=80,
@@ -177,6 +238,12 @@ Examples:
                         help='Show detailed output for each image')
     parser.add_argument('--images-dir', type=str, default='images',
                         help='Path to images directory (default: images)')
+    # nargs='+' so one flag can carry several paths. Takes precedence over
+    # --images-dir; see the work-list block below.
+    parser.add_argument('--file', type=str, nargs='+', metavar='PATH',
+                        help='Compress only these exact image file(s) instead '
+                             'of scanning a directory. Repeatable: '
+                             '--file a.jpg b.png')
     
     args = parser.parse_args()
     
@@ -185,30 +252,42 @@ Examples:
         print("Error: Quality must be between 1 and 100")
         sys.exit(1)
     
-    # Find images directory
-    images_dir = args.images_dir
-    if not os.path.isdir(images_dir):
-        print(f"Error: Images directory '{images_dir}' not found.")
-        print("Make sure you're running this script from your website root directory.")
-        sys.exit(1)
-    
-    # Find all images
-    images = find_images(images_dir)
-    
-    if not images:
-        print(f"No supported images found in '{images_dir}/'")
-        all_formats = SUPPORTED_EXTENSIONS.copy()
-        if HEIC_SUPPORTED:
-            all_formats.update(HEIC_EXTENSIONS)
-        print(f"Supported formats: {', '.join(sorted(all_formats))}")
-        if not HEIC_SUPPORTED:
-            print("(HEIC support available with: pip install pillow-heif)")
-        sys.exit(0)
-    
+    # Build the work list. --file wins over --images-dir: naming specific files
+    # means "touch only these", and that distinction matters because
+    # compression is in-place and lossy - a full directory run re-encodes
+    # images that earlier runs already compressed.
+    if args.file:
+        images = collect_single_files(args.file)
+        # No scan happened, so report the file count rather than a directory.
+        target_label = f"{len(images)} file(s) from --file"
+    else:
+        # Default path: recursive scan of --images-dir.
+        images_dir = args.images_dir
+        if not os.path.isdir(images_dir):
+            print(f"Error: Images directory '{images_dir}' not found.")
+            print("Make sure you're running this script from your website root directory.")
+            sys.exit(1)
+
+        images = find_images(images_dir)
+
+        # Only the scan can come back empty; collect_single_files() either
+        # returns every path it was given or exits.
+        if not images:
+            print(f"No supported images found in '{images_dir}/'")
+            all_formats = SUPPORTED_EXTENSIONS.copy()
+            if HEIC_SUPPORTED:
+                all_formats.update(HEIC_EXTENSIONS)
+            print(f"Supported formats: {', '.join(sorted(all_formats))}")
+            if not HEIC_SUPPORTED:
+                print("(HEIC support available with: pip install pillow-heif)")
+            sys.exit(0)
+
+        target_label = os.path.abspath(images_dir)
+
     print(f"\n{'='*60}")
     print(f"Image Compression Script")
     print(f"{'='*60}")
-    print(f"Directory:  {os.path.abspath(images_dir)}")
+    print(f"Target:     {target_label}")
     print(f"Quality:    {args.quality}")
     print(f"Max width:  {args.max_width}px")
     print(f"Images:     {len(images)} found")
@@ -274,4 +353,5 @@ Examples:
 if __name__ == '__main__':
     main()
 
-    ##use --images-dir to specify what directory
+    ## --images-dir DIR  -> scan that directory recursively
+    ## --file PATH [...]  -> compress only those exact files, no scan
